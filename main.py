@@ -47,7 +47,7 @@ async def on_message(message):
 
 
 @bot.command()
-async def bottles(ctx, amount: typing.Optional[int] = 99, *, liquid="beer"):
+async def bottles(ctx, amount: typing.Optional[int] = 99, *, liquid="beer"):  # pylint: disable=E1136
     await ctx.send('{} bottles of {} on the wall!'.format(amount, liquid))
 
 
