@@ -9,6 +9,7 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 from discord.utils import get
+from discord.errors import ClientException
 
 load_dotenv()
 
@@ -18,19 +19,24 @@ logging.basicConfig(level=logging.INFO)
 
 bot = commands.Bot(command_prefix="$")
 
+client = discord.Client()
+
 
 @bot.event
 async def on_ready():
     print("Hashashin is online.")
 
 
-@bot.command(pass_context=True)
-async def hassan(ctx):
+@bot.command(pass_context=True, aliases=["join"])
+async def hassan(ctx, channel: discord.VoiceChannel = None):
     channel = ctx.message.author.voice.channel
-    if channel:
-        await channel.connect(timeout=60.0)
-    else:
-        await ctx.send("You need to be connected to add Hashashin!")
+    await channel.connect(timeout=60.0)
+
+
+@hassan.error
+async def hassan_error(ctx, exc):
+    if isinstance(exc.original, AttributeError):
+        await ctx.send("You have to be connected!")
 
 
 @bot.event
