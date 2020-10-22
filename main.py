@@ -36,7 +36,7 @@ async def hassan(ctx, channel: discord.VoiceChannel = None):
 @hassan.error
 async def hassan_error(ctx, exc):
     if isinstance(exc.original, AttributeError):
-        await ctx.send("You have to be connected!")
+        await ctx.send("You have to be connected to add Hashashin!")
 
 
 @bot.event
