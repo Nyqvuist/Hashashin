@@ -29,26 +29,8 @@ async def load(ctx, extension):
     bot.load_extension(f"cogs.{extension}")
 
 
-@bot.event
-async def on_message(message):
-    if message.content == "hello":
-        await message.channel.send("bye")
-    await bot.process_commands(message)
-
-
 @bot.command(
-    help="Looks like someone needs help."
-)
-async def print(ctx, *args):
-    response = ""
-
-    for arg in args:
-        response = response + "" + arg
-    await ctx.send(response)
-
-
-@bot.command(
-    help="He need some milk!"
+    help="The Yin to my Yang"
 )
 async def ping(ctx):
     await ctx.send("pong")
