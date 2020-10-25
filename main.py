@@ -29,28 +29,11 @@ async def load(ctx, extension):
     bot.load_extension(f"cogs.{extension}")
 
 
-@bot.command(pass_context=True, aliases=["join"])
-async def hassan(ctx, channel: discord.VoiceChannel = None):
-    channel = ctx.message.author.voice.channel
-    await channel.connect(timeout=60.0)
-
-
-@hassan.error
-async def hassan_error(ctx, exc):
-    if isinstance(exc.original, AttributeError):
-        await ctx.send("You have to be connected to add Hashashin!")
-
-
 @bot.event
 async def on_message(message):
     if message.content == "hello":
         await message.channel.send("bye")
     await bot.process_commands(message)
-
-
-@bot.command()
-async def bottles(ctx, amount: typing.Optional[int] = 99, *, liquid="beer"):  # pylint: disable=E1136
-    await ctx.send('{} bottles of {} on the wall!'.format(amount, liquid))
 
 
 @bot.command(
