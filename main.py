@@ -7,16 +7,11 @@ from discord.ext.commands import Bot
 
 load_dotenv()  # Load environment variables
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 bot = Bot(command_prefix="$")
 
 client = discord.Client()
-
-
-@bot.command()
-async def load(ctx, extension):
-    bot.load_extension(f"cogs.{extension}")
 
 # Load all cogs in the cogs directory
 for filename in os.listdir("./cogs"):
