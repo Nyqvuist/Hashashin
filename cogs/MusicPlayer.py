@@ -2,13 +2,12 @@ import discord
 import youtube_dl
 import os
 import shutil
-from discord.ext.commands import Cog
-from discord.ext import commands
+
+from discord.ext.commands import Cog, Bot, command
 from discord.utils import get
-from discord.ext.commands import Bot
 
 client = discord.Client()
-bot = commands.Bot(command_prefix="$")
+bot = Bot(command_prefix="$")
 queues = {}
 
 
@@ -18,7 +17,7 @@ class MusicPlayer(Cog):
         self.client = client
         self.queues = queues
 
-    @commands.command(pass_context=True)
+    @command(pass_context=True)
     async def join(self, ctx):
         global vc
         channel = ctx.message.author.voice.channel
@@ -33,7 +32,7 @@ class MusicPlayer(Cog):
         if isinstance(exc, AttributeError):
             await ctx.send("You have to be connected to add Hashashin!")
 
-    @commands.command(pass_context=True, aliases=["disconnect"])
+    @command(pass_context=True, aliases=["disconnect"])
     async def leave(self, ctx):
         if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
             await ctx.voice_client.disconnect(force=True)
@@ -43,7 +42,7 @@ class MusicPlayer(Cog):
         if isinstance(exc.original, AttributeError):
             await ctx.send("Hashashin is not in a channel!")
 
-    @commands.command(pass_context=True, aliases=["p", "P"])
+    @command(pass_context=True, aliases=["p", "P"])
     async def play(self, ctx, url: str):
 
         def check_queue():
@@ -134,7 +133,7 @@ class MusicPlayer(Cog):
         await ctx.send(f"Playing: {nname}".format(nname))
         print("Playing")
 
-    @commands.command(pass_context=True, aliases=["pa", "PAUSE"])
+    @command(pass_context=True, aliases=["pa", "PAUSE"])
     async def pause(self, ctx):
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
 
@@ -144,7 +143,7 @@ class MusicPlayer(Cog):
         else:
             await ctx.send("There is no music playing.")
 
-    @commands.command(pass_context=True, aliases=["r", "RESUME"])
+    @command(pass_context=True, aliases=["r", "RESUME"])
     async def resume(self, ctx):
 
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
@@ -155,7 +154,7 @@ class MusicPlayer(Cog):
         else:
             await ctx.send("Music is not paused.")
 
-    @commands.command(pass_context=True, aliases=["s", "STOP"])
+    @command(pass_context=True, aliases=["s", "STOP"])
     async def stop(self, ctx):
 
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
@@ -168,7 +167,7 @@ class MusicPlayer(Cog):
         else:
             await ctx.send("No music playing, failed to stop.")
 
-    @commands.command(pass_context=True, aliases=["q", "QUEUE"])
+    @command(pass_context=True, aliases=["q", "QUEUE"])
     async def queue(self, ctx, url: str):
         Queue_infile = os.path.isdir("./Queue")
         if Queue_infile is False:
