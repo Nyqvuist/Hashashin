@@ -7,7 +7,7 @@ from discord.ext.commands import Bot
 
 load_dotenv()  # Load environment variables
 
-# logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 bot = Bot(command_prefix="$")
 
