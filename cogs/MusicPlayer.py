@@ -15,7 +15,7 @@ class MusicPlayer(Cog):
     def __init__(self, bot):
         self.bot = bot
         self.client = client
-        self.queues = queues
+        self.queues = {}
 
     @command(pass_context=True)
     async def join(self, ctx):
@@ -53,7 +53,7 @@ class MusicPlayer(Cog):
                     print("No more songs in the queue.")
                     queues.clear()
                     return
-                main_location = os.path.abspath(os.path.realpath("./Queue"))
+                main_location = os.path.dirname(os.path.realpath(__file__))
                 song_path = os.path.abspath(
                     os.path.realpath("./") + "\\" + first_file)
                 if length != 0:
@@ -62,12 +62,10 @@ class MusicPlayer(Cog):
                     song_there = os.path.isfile("song.mp3")
                     if song_there:
                         os.remove("song.mp3")
+                    shutil.move(song_path, main_location)
                     for file in os.listdir("./"):
                         if file.endswith(".mp3"):
                             os.rename(file, "song.mp3")
-                    for file in os.listdir("./"):
-                        if file.endswith(".mp3"):
-                            shutil.move(song_path, main_location)
 
                     vc = get(ctx.bot.voice_clients, guild=ctx.guild)
 
@@ -173,7 +171,7 @@ class MusicPlayer(Cog):
         if Queue_infile is False:
             os.mkdir("Queue")
 
-        DIR = os.path.abspath(os.path.realpath("./Queue"))
+        DIR = os.path.abspath(os.path.realpath("Queue"))
         q_num = len(os.listdir(DIR))
         q_num += 1
         add_queue = True
@@ -185,8 +183,7 @@ class MusicPlayer(Cog):
                 add_queue = False
                 queues[q_num] = q_num
 
-        queue_path = os.path.abspath(
-            os.path.realpath("./Queue") + f"song{q_num}.%(ext)s")
+        queue_path = os.path.abspath(("Queue") + f"song{q_num}.%(ext)s")
 
         ydl_opts = {
             'format': 'bestaudio/best',
