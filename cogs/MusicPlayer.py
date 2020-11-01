@@ -19,12 +19,8 @@ class MusicPlayer(Cog):
 
     @command(pass_context=True)
     async def join(self, ctx):
-        global vc
         channel = ctx.message.author.voice.channel
-        vc = get(ctx.bot.voice_clients, guild=ctx.guild)
-        if vc and vc.is_connected():
-            await ctx.vc.move_to(channel)
-        else:
+        if channel:
             await channel.connect()
 
     @join.error
@@ -48,7 +44,7 @@ class MusicPlayer(Cog):
         def check_queue():
             Queue_infile = os.path.isdir("./Queue")
             if Queue_infile is True:
-                DIR = os.path.abspath(os.path.realpath("Queue"))
+                DIR = os.path.abspath(os.path.realpath("./Queue"))
                 length = len(os.listdir(DIR))
                 still_q = length - 1
                 try:
@@ -57,19 +53,23 @@ class MusicPlayer(Cog):
                     print("No more songs in the queue.")
                     queues.clear()
                     return
-                main_location = os.path.dirname(os.path.realpath(__file__))
+                main_location = os.path.abspath(os.path.realpath("./Queue"))
                 song_path = os.path.abspath(
-                    os.path.realpath("Queue") + "\\" + first_file)
+                    os.path.realpath("./") + "\\" + first_file)
                 if length != 0:
                     print("Song done, playing next song.")
                     print(f"Songs still in queue: {still_q}")
                     song_there = os.path.isfile("song.mp3")
                     if song_there:
                         os.remove("song.mp3")
-                    shutil.move(song_path, main_location)
                     for file in os.listdir("./"):
                         if file.endswith(".mp3"):
                             os.rename(file, "song.mp3")
+                    for file in os.listdir("./"):
+                        if file.endswith(".mp3"):
+                            shutil.move(song_path, main_location)
+
+                    vc = get(ctx.bot.voice_clients, guild=ctx.guild)
 
                     vc.play(discord.FFmpegPCMAudio("song.mp3"),
                             after=lambda e: check_queue())
@@ -102,8 +102,6 @@ class MusicPlayer(Cog):
         except:
             print("No Queue folder.")
 
-        vc = get(ctx.bot.voice_clients, guild=ctx.guild)
-
         ydl_opts = {
             'format': 'bestaudio/best',
             'quiet': True,
@@ -124,14 +122,16 @@ class MusicPlayer(Cog):
                 print(f"Renamed file: {file}\n")
                 os.rename(file, "song.mp3")
 
+                nname = name.rsplit("-", 0)
+                await ctx.send(f"Playing: {nname}".format(nname))
+                print("Playing")
+
+        vc = get(ctx.bot.voice_clients, guild=ctx.guild)
+
         vc.play(discord.FFmpegPCMAudio("song.mp3"),
                 after=lambda e: check_queue())
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 0.03
-
-        nname = name.rsplit("-", 0)
-        await ctx.send(f"Playing: {nname}".format(nname))
-        print("Playing")
 
     @command(pass_context=True, aliases=["pa", "PAUSE"])
     async def pause(self, ctx):
@@ -173,20 +173,20 @@ class MusicPlayer(Cog):
         if Queue_infile is False:
             os.mkdir("Queue")
 
-        DIR = os.path.abspath(os.path.realpath("Queue"))
+        DIR = os.path.abspath(os.path.realpath("./Queue"))
         q_num = len(os.listdir(DIR))
         q_num += 1
         add_queue = True
 
         while add_queue:
             if q_num in queues:
-                q_num = + 1
+                q_num += 1
             else:
                 add_queue = False
                 queues[q_num] = q_num
 
         queue_path = os.path.abspath(
-            os.path.realpath("Queue") + f"\song{q_num}.%(ext)s")
+            os.path.realpath("./Queue") + f"song{q_num}.%(ext)s")
 
         ydl_opts = {
             'format': 'bestaudio/best',
@@ -202,7 +202,7 @@ class MusicPlayer(Cog):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             print("Downloading song\n")
             ydl.download([url])
-        await ctx.send("Adding Song" + str(q_num) + " to the queue")
+        await ctx.send("Adding Song " + str(q_num) + " to the queue")
 
 
 def setup(bot):
