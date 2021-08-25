@@ -9,7 +9,7 @@ load_dotenv()  # Load environment variables
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(command_prefix="$")
+bot = Bot(command_prefix="$", case_insensitive=True)
 
 client = discord.Client()
 

@@ -38,7 +38,7 @@ class MusicPlayer(Cog):
         if isinstance(exc.original, AttributeError):
             await ctx.send("Hashashin is not in a channel!")
 
-    @command(pass_context=True, aliases=["p", "P"])
+    @command(pass_context=True)
     async def play(self, ctx, url: str):
 
         def check_queue():
@@ -53,13 +53,15 @@ class MusicPlayer(Cog):
                     print("No more songs in the queue.")
                     queues.clear()
                     return
-                main_location = os.path.dirname(os.path.realpath(__file__))
+                main_location = os.path.dirname(os.path.realpath("Queue"))
                 song_path = os.path.abspath(
                     os.path.realpath("./") + "\\" + first_file)
+                print(main_location, song_path)
                 if length != 0:
                     print("Song done, playing next song.")
                     print(f"Songs still in queue: {still_q}")
                     song_there = os.path.isfile("song.mp3")
+
                     if song_there:
                         os.remove("song.mp3")
                     shutil.move(song_path, main_location)
@@ -131,7 +133,7 @@ class MusicPlayer(Cog):
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 0.03
 
-    @command(pass_context=True, aliases=["pa", "PAUSE"])
+    @command(pass_context=True)
     async def pause(self, ctx):
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
 
@@ -141,7 +143,7 @@ class MusicPlayer(Cog):
         else:
             await ctx.send("There is no music playing.")
 
-    @command(pass_context=True, aliases=["r", "RESUME"])
+    @command(pass_context=True)
     async def resume(self, ctx):
 
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
@@ -152,7 +154,7 @@ class MusicPlayer(Cog):
         else:
             await ctx.send("Music is not paused.")
 
-    @command(pass_context=True, aliases=["s", "STOP"])
+    @command(pass_context=True)
     async def stop(self, ctx):
 
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
@@ -165,7 +167,7 @@ class MusicPlayer(Cog):
         else:
             await ctx.send("No music playing, failed to stop.")
 
-    @command(pass_context=True, aliases=["q", "QUEUE"])
+    @command(pass_context=True)
     async def queue(self, ctx, url: str):
         Queue_infile = os.path.isdir("./Queue")
         if Queue_infile is False:
@@ -183,7 +185,7 @@ class MusicPlayer(Cog):
                 add_queue = False
                 queues[q_num] = q_num
 
-        queue_path = os.path.abspath(("Queue") + f"song{q_num}.%(ext)s")
+        queue_path = os.path.abspath(("Queue")) + f"song{q_num}.%(ext)s"
 
         ydl_opts = {
             'format': 'bestaudio/best',
