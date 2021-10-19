@@ -1,5 +1,8 @@
 import discord
 import os
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+
 
 from discord.ext.commands import Cog, Bot, command
 from discord.utils import get
@@ -7,8 +10,19 @@ from discord.utils import get
 client = discord.Client()
 bot = Bot(command_prefix="$")
 
+SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
+SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
+SPOTIPY_REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI")
+
+SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
+             client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI).get_access_token(as_dict=True, check_cache=True)
+
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+    client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET, redirect_uri=SPOTIPY_REDIRECT_URI, scope="user-modify-playback-state"))
+
 
 class MusicPlayer(Cog):
+
     def __init__(self, bot):
         self.bot = bot
         self.client = client
@@ -35,8 +49,33 @@ class MusicPlayer(Cog):
             await ctx.send("Hashashin is not in a channel!")
 
     @command(pass_context=True)
-    async def play(self, ctx, url: str):
+    async def play(self, ctx, *, message):
         vc = get(ctx.bot.voice_clients, guild=ctx.guild)
+        channel = ctx.message.author.voice.channel
+        try:
+            if channel:
+                await channel.connect()
+        except discord.errors.ClientException:
+            pass
+        except:
+            print("!ERROR!")
+
+        message = "+".join(message.split())
+
+        results = sp.search(q=message, limit=1,
+                            offset=0, type='track', market=None)
+
+        source = sp.start_playback(uris=['spotify:track:{}'.format(
+            results['tracks']['items'][0]['id'])])
+
+        url = 'https://open.spotify.com/track/{}'.format(
+            results['tracks']['items'][0]['id'])
+
+        vc.play(source)
+
+        await ctx.send(url)
+
+        print(url)
 
     @command(pass_context=True)
     async def pause(self, ctx):
