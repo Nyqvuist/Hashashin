@@ -51,7 +51,7 @@ class SteamCommands(Cog):
         embed = discord.Embed(
             title=appdetails["name"],
             description=appdetails["short_description"],
-            color=discord.Color.green()
+            color=discord.Color.random()
         )
 
         embed.set_image(url=appdetails["header_image"])
@@ -61,8 +61,6 @@ class SteamCommands(Cog):
             embed.set_footer(text=appdetails["legal_notice"][:185])
         except discord.errors.ClientException:
             pass
-        except:
-            print("!ERROR!")
 
         # Adding multiple devs to developer field.
         dev = ", ".join([str(item) for item in appdetails["developers"]])
