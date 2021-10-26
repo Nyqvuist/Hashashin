@@ -34,42 +34,54 @@ class SteamCommands(Cog):
         # await ctx.send(match)
 
         # Finding game name and giving appID a variable.
+
         for x in gdata["applist"]["apps"]:
             if (x["name"] == message.title()):
                 game = x["name"]
                 appID = (x["appid"])
 
         # API request to then get game details using appID.
+
         gsres = requests.get(
             "https://store.steampowered.com/api/appdetails/?appids={}".format(appID))
         gsdata = gsres.json()
 
-        # Accessing data sub-dictionary for all appdetails.
-        appdetails = gsdata["{}".format(appID)]["data"]
+        # Accessing data dictionary and assigned them values.
+
+        appdetails = gsdata.get("{}".format(appID)).get("data")
+        notice = appdetails.get("legal_notice")
 
         # Displaying all information through discord bot.
+
         embed = discord.Embed(
             title=appdetails["name"],
-            description=appdetails["short_description"],
+            url="https://store.steampowered.com/app/{}/".format(appID),
+            description=appdetails.get("short_description"),
             color=discord.Color.random()
         )
 
         embed.set_image(url=appdetails["header_image"])
 
-        # Try block to pass an exception if game has no legal_notice.
-        try:
-            embed.set_footer(text=appdetails["legal_notice"][:185])
-        except discord.errors.ClientException:
-            pass
+        # If statement to check if game has a legal notice or not.
+
+        if appdetails.get("legal_notice") not in appdetails.values() or appdetails.get("legal_notice") == None:
+            embed.set_footer(text="")
+        else:
+            embed.set_footer(text=str(notice)[:180])
 
         # Adding multiple devs to developer field.
-        dev = ", ".join([str(item) for item in appdetails["developers"]])
 
+        dev = ", ".join([str(item)
+                         for item in appdetails.get("developers")])
         embed.add_field(name="Developers: ",
                         value=dev, inline=True)
+        # Checking if game is free to display Free instead of Price.
 
-        embed.add_field(
-            name="Price: ", value=appdetails["price_overview"]["final_formatted"], inline=False)
+        if appdetails["is_free"] == True:
+            embed.add_field(name="Price: ", value="Free", inline=False)
+        else:
+            embed.add_field(
+                name="Price: ", value=appdetails.get("price_overview")["final_formatted"], inline=False)
 
         await ctx.send(embed=embed)
 
