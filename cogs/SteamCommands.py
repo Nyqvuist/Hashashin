@@ -43,7 +43,7 @@ class SteamCommands(Cog):
         # API request to then get game details using appID.
 
         gsres = requests.get(
-            "https://store.steampowered.com/api/appdetails/?appids={}".format(appID))
+            "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))
         gsdata = gsres.json()
 
         # Accessing data dictionary and assigned them values.
