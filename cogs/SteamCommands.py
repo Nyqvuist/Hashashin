@@ -21,23 +21,22 @@ class SteamCommands(Cog):
         self.bot = bot
     # Basic search function for steam API for appID
 
-    @command(pass_context=True)
-    async def search(self, ctx, *, message):
+    @command(help="Search engine for the steam page.", brief="Search Steam Games.", pass_context=True)
+    async def search(self, ctx, *, game):
         gres = requests.get(
             "https://api.steampowered.com/ISteamApps/GetAppList/v2/")
         gdata = gres.json()
         # for x in gdata["applist"]["apps"]:
-        # pattern = re.compile(r"{}".format(message.title()))
-        # matches = pattern.finditer(x["name"])
+        # pattern = re.compile(r"{}".format(game))
+        # matches = pattern.finditer(gdata["applist"]["apps"])
         # for match in matches:
         # print(match)
-        # await ctx.send(match)
 
         # Finding game name and giving appID a variable.
 
         for x in gdata["applist"]["apps"]:
-            if (x["name"] == message.title()):
-                game = x["name"]
+            if (x["name"] == game.title()):
+                vgame = x["name"]
                 appID = (x["appid"])
 
         # API request to then get game details using appID.
@@ -46,17 +45,25 @@ class SteamCommands(Cog):
             "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))
         gsdata = gsres.json()
 
+        # Remove html content from description and notice.
+        cleanr = re.compile('<.*?>')
+
+        def cleanhtml(raw_html):
+            cleantext = re.sub(cleanr, '', raw_html)
+            return cleantext
+
         # Accessing data dictionary and assigned them values.
 
         appdetails = gsdata.get("{}".format(appID)).get("data")
         notice = appdetails.get("legal_notice")
+        description = appdetails.get("short_description")
 
         # Displaying all information through discord bot.
 
         embed = discord.Embed(
             title=appdetails["name"],
             url="https://store.steampowered.com/app/{}/".format(appID),
-            description=appdetails.get("short_description"),
+            description=cleanhtml(description),
             color=discord.Color.random()
         )
 
@@ -67,7 +74,7 @@ class SteamCommands(Cog):
         if appdetails.get("legal_notice") not in appdetails.values() or appdetails.get("legal_notice") == None:
             embed.set_footer(text="")
         else:
-            embed.set_footer(text=str(notice)[:180])
+            embed.set_footer(text=str(cleanhtml(notice))[:180])
 
         # Adding multiple devs to developer field.
 
@@ -75,6 +82,7 @@ class SteamCommands(Cog):
                          for item in appdetails.get("developers")])
         embed.add_field(name="Developers: ",
                         value=dev, inline=True)
+
         # Checking if game is free to display Free instead of Price.
 
         if appdetails["is_free"] == True:
