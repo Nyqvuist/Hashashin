@@ -9,35 +9,25 @@ import requests
 from discord import Embed
 import re
 import discord
+import difflib
+from hashashin.search import SteamSearch
+
+#STEAM_KEY = os.getenv("STEAM_KEY")
+
+#api = WebAPI(key=STEAM_KEY)
 
 
-STEAM_KEY = os.getenv("STEAM_KEY")
-
-api = WebAPI(key=STEAM_KEY)
-
-
-class SteamCommands(Cog):
+class Search(Cog):
     def __init__(self, bot):
         self.bot = bot
     # Basic search function for steam API for appID
 
     @command(help="Search engine for the steam page.", brief="Search Steam Games.", pass_context=True)
     async def search(self, ctx, *, game):
-        gres = requests.get(
-            "https://api.steampowered.com/ISteamApps/GetAppList/v2/")
-        gdata = gres.json()
-        # for x in gdata["applist"]["apps"]:
-        # pattern = re.compile(r"{}".format(game))
-        # matches = pattern.finditer(gdata["applist"]["apps"])
-        # for match in matches:
-        # print(match)
 
-        # Finding game name and giving appID a variable.
+        # Imported Search function to obtain appID.
 
-        for x in gdata["applist"]["apps"]:
-            if (x["name"] == game.title()):
-                vgame = x["name"]
-                appID = (x["appid"])
+        appID = SteamSearch(game)
 
         # API request to then get game details using appID.
 
@@ -57,6 +47,7 @@ class SteamCommands(Cog):
         appdetails = gsdata.get("{}".format(appID)).get("data")
         notice = appdetails.get("legal_notice")
         description = appdetails.get("short_description")
+        price = appdetails.get("price_overview")
 
         # Displaying all information through discord bot.
 
@@ -87,6 +78,11 @@ class SteamCommands(Cog):
 
         if appdetails["is_free"] == True:
             embed.add_field(name="Price: ", value="Free", inline=False)
+
+        elif price.get("initial_formatted") != "":
+            embed.add_field(name="Price: ", value="~~{}~~".format(
+                price.get("initial_formatted")) + " " + "**{}**".format(price.get("final_formatted")), inline=False)
+
         else:
             embed.add_field(
                 name="Price: ", value=appdetails.get("price_overview")["final_formatted"], inline=False)
@@ -95,4 +91,4 @@ class SteamCommands(Cog):
 
 
 def setup(bot):
-    bot.add_cog(SteamCommands(bot))
+    bot.add_cog(Search(bot))
