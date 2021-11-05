@@ -6,15 +6,19 @@ import steam
 from steam.webapi import WebAPI
 import os
 import requests
+import nltk
 from discord import Embed
 import re
 import discord
 import difflib
 from hashashin.search import SteamSearch
+from nltk.tokenize import sent_tokenize
+import datetime
 
-#STEAM_KEY = os.getenv("STEAM_KEY")
 
-#api = WebAPI(key=STEAM_KEY)
+STEAM_KEY = os.getenv("STEAM_KEY")
+
+api = WebAPI(key=STEAM_KEY)
 
 
 class Search(Cog):
@@ -65,7 +69,9 @@ class Search(Cog):
         if appdetails.get("legal_notice") not in appdetails.values() or appdetails.get("legal_notice") == None:
             embed.set_footer(text="")
         else:
-            embed.set_footer(text=str(cleanhtml(notice))[:180])
+            snotice = sent_tokenize(notice)
+            notice = " ".join([str(item) for item in snotice[:2]])
+            embed.set_footer(text=cleanhtml(notice))
 
         # Adding multiple devs to developer field.
 
@@ -88,6 +94,67 @@ class Search(Cog):
                 name="Price: ", value=appdetails.get("price_overview")["final_formatted"], inline=False)
 
         await ctx.send(embed=embed)
+
+    @command(help="Get Game Updates For Steam Games.", brief="Steam Game News.", pass_context=True)
+    async def update(self, ctx, *, game):
+
+        appID = SteamSearch(game)
+
+        upres = requests.get(
+            "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid={}".format(appID))
+        updata = upres.json()
+
+        cleanr = re.compile('<.*?>')
+
+        def cleanhtml(raw_html):
+            cleantext = re.sub(cleanr, '', raw_html)
+            return cleantext
+
+        item = updata["appnews"]["newsitems"]
+        contents = cleanhtml(item[0]["contents"])
+
+        # Tokenizes sentence to limit the amt of sentences displayed.
+
+        scontents = sent_tokenize(contents)
+        contents = " ".join([str(item) for item in scontents[:4]])
+
+        embed = discord.Embed(
+            title=item[0]["title"],
+            url=item[0]["url"],
+            description=contents,
+            color=discord.Color.random()
+        )
+
+        date_time = item[0]["date"]
+        date_time = datetime.datetime.fromtimestamp(
+            date_time).strftime('%m/%d/%Y')
+
+        embed.add_field(name="Date: ", value=date_time, inline=True)
+
+        if item[0]["author"] != "":
+
+            embed.add_field(name="Author: ",
+                            value=item[0]["author"], inline=True)
+
+        else:
+            pass
+
+        embed.set_footer(text="Community Announcements.")
+
+        await ctx.send(embed=embed)
+
+    @command(help="Get Number of Players on the Game.", brief="Amount of Players", pass_context=True)
+    async def count(self, ctx, *, game):
+
+        appID = SteamSearch(game)
+
+        cores = requests.get(
+            "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={}".format(appID))
+        codata = cores.json()
+
+        player_count = codata["response"]["player_count"]
+
+        await ctx.send("There are currently " + "`{}`".format(player_count) + " players.")
 
 
 def setup(bot):
