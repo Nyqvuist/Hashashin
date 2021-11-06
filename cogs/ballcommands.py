@@ -2,7 +2,6 @@ from typing import Counter
 from discord import channel, client
 from discord.ext.commands import Cog, BucketType, command, cooldown, errors
 from discord.ext import commands
-from discord.ext.commands.errors import MissingRole
 import random
 
 responses = ["It is Certain.", "It is decidedly so.", "Without a doubt.", "Yes definitely.", "You may rely on it.", "As i see it, yes.",
