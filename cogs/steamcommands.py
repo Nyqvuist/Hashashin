@@ -15,6 +15,8 @@ from nltk.tokenize import sent_tokenize
 import datetime
 
 
+nltk.download('punkt')
+
 STEAM_KEY = os.environ.get("STEAM_KEY")
 
 api = WebAPI(key=STEAM_KEY)
