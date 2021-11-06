@@ -1,7 +1,6 @@
 from discord import channel, client
 from discord.ext.commands import Cog, BucketType, command, cooldown, errors
 from discord.ext import commands
-from discord.ext.commands.errors import MissingRole
 import steam
 from steam.webapi import WebAPI
 import os
