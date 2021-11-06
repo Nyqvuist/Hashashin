@@ -1,6 +1,5 @@
 discord.py==1.0.0
 python-dotenv==0.19.1
-os-sys==2.1.4
 nltk==3.6.5
 steam==1.2.0
 requests==2.26.0
