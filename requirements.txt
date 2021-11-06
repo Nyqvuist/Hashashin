@@ -1,4 +1,4 @@
-discord.py==1.0.0
+git+https://github.com/Rapptz/discord.py@rewrite
 python-dotenv==0.19.1
 nltk==3.6.5
 steam==1.2.0
