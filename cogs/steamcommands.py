@@ -201,11 +201,11 @@ class Search(Cog):
                               str(appID) + "&key=" + str(STEAM_KEY) + "&steamid=" + str(real_id))).json()
 
         stats = adata["playerstats"]
-        achievements = adata["playerstats"]["achievements"]
 
         if stats.get("achievements") not in stats.values():
             await ctx.send(name + " does not have achievements.")
         else:
+            achievements = adata["playerstats"]["achievements"]
             alist = [x for x in achievements
                      if x["achieved"] == 1]
 
