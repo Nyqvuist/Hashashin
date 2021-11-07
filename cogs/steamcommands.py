@@ -31,14 +31,11 @@ class Search(Cog):
     async def search(self, ctx, *, game):
 
         # Imported Search function to obtain appID.
-
         appID = SteamSearch(game)
 
         # API request to then get game details using appID.
-
-        gsres = requests.get(
-            "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))
-        gsdata = gsres.json()
+        gsdata = (requests.get(
+            "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))).json()
 
         # Remove html content from description and notice.
         cleanr = re.compile('<.*?>')
@@ -55,7 +52,6 @@ class Search(Cog):
         price = appdetails.get("price_overview")
 
         # Displaying all information through discord bot.
-
         embed = discord.Embed(
             title=appdetails["name"],
             url="https://store.steampowered.com/app/{}/".format(appID),
@@ -101,9 +97,8 @@ class Search(Cog):
 
         appID = SteamSearch(game)
 
-        upres = requests.get(
-            "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid={}".format(appID))
-        updata = upres.json()
+        updata = (requests.get(
+            "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid={}".format(appID))).json()
 
         cleanr = re.compile('<.*?>')
 
@@ -147,12 +142,10 @@ class Search(Cog):
     @command(help="Get Number of Players in the Game.", brief="Amount of Players.", pass_context=True)
     async def count(self, ctx, *, game):
 
-        gres = requests.get(
-            "https://api.steampowered.com/ISteamApps/GetAppList/v2/")
-        gdata = gres.json()
+        gdata = (requests.get(
+            "https://api.steampowered.com/ISteamApps/GetAppList/v2/")).json()
 
         apps = gdata["applist"]["apps"]
-
         glist = [x["name"].lower() for x in apps if x["name"]]
 
         possibilities = glist
@@ -160,18 +153,63 @@ class Search(Cog):
         matches = difflib.get_close_matches(
             game.lower(), possibilities, n=1, cutoff=0.3)
 
-        for x in gdata["applist"]["apps"]:
-            if (matches[0] == x["name"].lower()):
-                appID = (x["appid"])
-                name = x["name"]
+        app = [x for x in apps if matches[0] == x["name"].lower()]
 
-        cores = requests.get(
-            "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={}".format(appID))
-        codata = cores.json()
+        appID = app[0]["appid"]
+        name = app[0]["name"]
+
+        codata = (requests.get(
+            "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={}".format(appID))).json()
 
         player_count = codata["response"]["player_count"]
 
         await ctx.send("There are currently " + "`{}`".format(player_count) + " playing {}.".format(name))
+
+    @command(help="How many completed Achievements.", brief="Completed Achievements.", pass_context=True)
+    async def achieve(self, ctx, *, game):
+
+        await ctx.send("Please enter a steamid.")
+
+        def check(m: discord.Message):
+            return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
+
+        msg = await self.bot.wait_for("message", check=check, timeout=60.0)
+        id = msg.content
+
+        gdata = (requests.get(
+            "https://api.steampowered.com/ISteamApps/GetAppList/v2/")).json()
+
+        apps = gdata["applist"]["apps"]
+        glist = [x["name"].lower() for x in apps if x["name"]]
+
+        possibilities = glist
+
+        matches = difflib.get_close_matches(
+            game.lower(), possibilities, n=1, cutoff=0.3)
+
+        app = [x for x in apps if matches[0] == x["name"].lower()]
+
+        appID = app[0]["appid"]
+        name = app[0]["name"]
+
+        idata = (requests.get("https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key={}".format(
+            STEAM_KEY) + "&vanityurl={}".format(id))).json()
+
+        real_id = idata["response"]["steamid"]
+
+        adata = (requests.get("https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/?appid=" +
+                              str(appID) + "&key=" + str(STEAM_KEY) + "&steamid=" + str(real_id))).json()
+
+        stats = adata["playerstats"]
+        achievements = adata["playerstats"]["achievements"]
+
+        if stats.get("achievements") not in stats.values():
+            await ctx.send(name + " does not have achievements.")
+        else:
+            alist = [x for x in achievements
+                     if x["achieved"] == 1]
+
+        await ctx.send(id + " has completed " + str(len(alist)) + " out of " + str(len(achievements)) + " achievements in " + name + ".")
 
 
 def setup(bot):

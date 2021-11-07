@@ -17,8 +17,8 @@ def SteamSearch(game):
     matches = difflib.get_close_matches(
         game.lower(), possibilities, n=1, cutoff=0.3)
 
-    for x in gdata["applist"]["apps"]:
-        if (matches[0] == x["name"].lower()):
-            appID = (x["appid"])
+    app = [x for x in apps if matches[0] == x["name"].lower()]
+
+    appID = app[0]["appid"]
 
     return appID
