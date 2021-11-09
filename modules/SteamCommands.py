@@ -102,21 +102,28 @@ async def player_achievement(ctx: tanjun.abc.Context, game: str, id: str) -> Non
     idata = (requests.get("https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key={}".format(
         STEAM_KEY) + "&vanityurl={}".format(id))).json()
 
-    real_id = idata["response"]["steamid"]
-
-    adata = (requests.get("https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/?appid=" +
-                          str(appID) + "&key=" + str(STEAM_KEY) + "&steamid=" + str(real_id))).json()
-
-    stats = adata["playerstats"]
-
-    if stats.get("achievements") not in stats.values():
-        await ctx.respond(name + " does not have achievements.")
+    if idata["response"].get("steamid") not in idata["response"].values():
+        await ctx.respond("There is no match for this ID.")
     else:
-        achievements = adata["playerstats"]["achievements"]
-        alist = [x for x in achievements
-                 if x["achieved"] == 1]
+        real_id = idata["response"]["steamid"]
 
-    await ctx.respond(id + " has completed " + str(len(alist)) + " out of " + str(len(achievements)) + " achievements in " + name + ".")
+        adata = (requests.get("https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/?appid=" +
+                              str(appID) + "&key=" + str(STEAM_KEY) + "&steamid=" + str(real_id))).json()
+
+        if adata["playerstats"].get("error") in adata["playerstats"].values():
+            await ctx.respond("This profile is not public.")
+        else:
+
+            stats = adata["playerstats"]
+
+            if stats.get("achievements") not in stats.values():
+                await ctx.respond(name + " does not have achievements.")
+            else:
+                achievements = adata["playerstats"]["achievements"]
+                alist = [x for x in achievements
+                         if x["achieved"] == 1]
+
+                await ctx.respond(id + " has completed " + str(len(alist)) + " out of " + str(len(achievements)) + " achievements in " + name + ".")
 
 
 @component.with_slash_command
