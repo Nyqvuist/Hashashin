@@ -138,7 +138,8 @@ async def game_updates(ctx: tanjun.abc.Context, game: str) -> None:
     updata = (requests.get(
         "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid={}".format(appID))).json()
 
-    cleanr = re.compile('<.*?>')
+    cleanr = re.compile(
+        f'<.*?>|{{.*?}}|\[img\].+\[/img\]|\[.*?\]')
 
     def cleanhtml(raw_html):
         cleantext = re.sub(cleanr, '', raw_html)
@@ -150,7 +151,7 @@ async def game_updates(ctx: tanjun.abc.Context, game: str) -> None:
     # Tokenizes sentence to limit the amt of sentences displayed.
 
     scontents = sent_tokenize(contents)
-    contents = " ".join([str(item) for item in scontents[:4]])
+    contents = " ".join([str(item) for item in scontents[:5]])
 
     url = item[0]["url"]
     url = url.replace(" ", "")
