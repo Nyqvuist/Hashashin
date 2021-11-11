@@ -145,7 +145,10 @@ async def game_updates(ctx: tanjun.abc.Context, game: str) -> None:
         cleantext = re.sub(cleanr, '', raw_html)
         return cleantext
 
-    item = updata["appnews"]["newsitems"]
+    items = updata["appnews"]["newsitems"]
+
+    item = [x for x in items if x["feedlabel"] == "Community Announcements"]
+
     contents = cleanhtml(item[0]["contents"])
 
     # Tokenizes sentence to limit the amt of sentences displayed.
@@ -177,7 +180,7 @@ async def game_updates(ctx: tanjun.abc.Context, game: str) -> None:
     else:
         pass
 
-    embed.set_footer(text="Community Announcements.")
+    embed.set_footer(text=item[0]["feedlabel"])
 
     await ctx.respond(embed=embed)
 
