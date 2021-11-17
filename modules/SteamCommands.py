@@ -45,7 +45,7 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
     # Accessing data dictionary and assigned them values.
 
     appdetails = gsdata.get("{}".format(appID)).get("data")
-    notice = appdetails.get("legal_notice")
+    notice = appdetails["legal_notice"]
     description = appdetails.get("short_description")
     price = appdetails.get("price_overview")
 
@@ -62,7 +62,7 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
         embed.set_footer(text="")
     else:
         snotice = sent_tokenize(notice)
-        notice = " ".join([str(item) for item in snotice[:2]])
+        notice = " ".join([str(item) for item in snotice[:1]])
         embed.set_footer(text=cleanhtml(notice))
 
     # Adding multiple devs to developer field.
@@ -75,15 +75,15 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
     # Checking if game is free to display Free instead of Price.
 
     if appdetails["is_free"] == True:
-        embed.add_field(name="Price: ", value="Free", inline=False)
+        embed.add_field(name="Price: ", value="Free", inline=True)
 
     elif price.get("initial_formatted") != "":
         embed.add_field(name="Price: ", value="~~{}~~".format(
-            price.get("initial_formatted")) + " " + "**{}**".format(price.get("final_formatted")), inline=False)
+            price.get("initial_formatted")) + " " + "**{}**".format(price.get("final_formatted")), inline=True)
 
     else:
         embed.add_field(
-            name="Price: ", value=appdetails.get("price_overview")["final_formatted"], inline=False)
+            name="Price: ", value=appdetails.get("price_overview")["final_formatted"], inline=True)
 
     await ctx.respond(embed)
 
@@ -197,9 +197,16 @@ async def count(ctx: tanjun.abc.Context, game: str) -> None:
     codata = (requests.get(
         "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={}".format(appID))).json()
 
-    player_count = codata["response"]["player_count"]
+    check = codata["response"]
 
-    await ctx.respond("There are currently " + "`{}`".format(player_count) + " playing {}.".format(name))
+    if check.get("player_count") not in check.values():
+        await ctx.respond("This game currently does not have players online.")
+
+    else:
+
+        player_count = codata["response"]["player_count"]
+
+        await ctx.respond("There are currently " + "`{}`".format(player_count) + " playing {}.".format(name))
 
 
 @tanjun.as_loader
