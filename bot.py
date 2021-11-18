@@ -53,7 +53,7 @@ async def on_shard_ready(
     """Event that triggers when the hikari gateway is ready."""
     builder = (
         lavasnek_rs.LavalinkBuilder(event.my_user.id, DISCORD_TOKEN)
-        .set_host(LAVALINK_HOST)
+        .set_host(str(LAVALINK_HOST))
         .set_password(LAVALINK_PASSWORD)
         .set_port(int(LAVALINK_PORT))
         .set_start_gateway(False)
