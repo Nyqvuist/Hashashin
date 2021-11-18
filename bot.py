@@ -54,7 +54,7 @@ async def on_shard_ready(
     builder = (
         lavasnek_rs.LavalinkBuilder(event.my_user.id, DISCORD_TOKEN)
         .set_host(str(LAVALINK_HOST))
-        .set_password(LAVALINK_PASSWORD)
+        .set_password(str(LAVALINK_PASSWORD))
         .set_port(int(LAVALINK_PORT))
         .set_start_gateway(False)
         # We set start gateway False because hikari can handle
