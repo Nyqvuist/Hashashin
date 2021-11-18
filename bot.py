@@ -55,7 +55,7 @@ async def on_shard_ready(
         lavasnek_rs.LavalinkBuilder(event.my_user.id, DISCORD_TOKEN)
         .set_host(str(LAVALINK_HOST))
         .set_password(str(LAVALINK_PASSWORD))
-        .set_port(LAVALINK_PORT)
+        .set_port(int(LAVALINK_PORT))
         .set_start_gateway(False)
         # We set start gateway False because hikari can handle
         # voice events for us.
@@ -99,6 +99,8 @@ async def on_voice_server_update(
 @bot.listen(hikari.StartedEvent)
 async def on_started(event: hikari.StartedEvent) -> None:
     print("Hashashin is online!")
+    print(LAVALINK_PORT)
+    print(int(LAVALINK_PORT))
 
 
 for filename in os.listdir("./modules"):
