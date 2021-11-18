@@ -98,8 +98,6 @@ async def on_voice_server_update(
 @bot.listen(hikari.StartedEvent)
 async def on_started(event: hikari.StartedEvent) -> None:
     print("Hashashin is online!")
-    print(LAVALINK_PORT)
-    print(int(LAVALINK_PORT))
 
 
 for filename in os.listdir("./modules"):
