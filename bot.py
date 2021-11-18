@@ -12,6 +12,7 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 LAVALINK_HOST = os.getenv("LAVALINK_HOST")
 LAVALINK_PASSWORD = os.getenv("LAVALINK_PASSWORD")
 LAVALINK_PORT = os.getenv("LAVALINK_PORT")
+LAVALINK_PORT = int(LAVALINK_PORT)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -55,7 +56,7 @@ async def on_shard_ready(
         lavasnek_rs.LavalinkBuilder(event.my_user.id, DISCORD_TOKEN)
         .set_host(str(LAVALINK_HOST))
         .set_password(str(LAVALINK_PASSWORD))
-        .set_port(str(LAVALINK_PORT))
+        .set_port(LAVALINK_PORT)
         .set_start_gateway(False)
         # We set start gateway False because hikari can handle
         # voice events for us.
