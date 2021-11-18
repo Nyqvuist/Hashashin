@@ -12,7 +12,6 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 LAVALINK_HOST = os.getenv("LAVALINK_HOST")
 LAVALINK_PASSWORD = os.getenv("LAVALINK_PASSWORD")
 LAVALINK_PORT = os.getenv("LAVALINK_PORT")
-LAVALINK_PORT = str(LAVALINK_PORT)
 
 logging.basicConfig(level=logging.INFO)
 
