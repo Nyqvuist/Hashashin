@@ -45,9 +45,7 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
     # Accessing data dictionary and assigned them values.
 
     appdetails = gsdata.get("{}".format(appID)).get("data")
-    notice = appdetails["legal_notice"]
     description = appdetails.get("short_description")
-    price = appdetails.get("price_overview")
 
     embed = hikari.Embed(
         title=appdetails["name"],
@@ -61,6 +59,7 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
     if appdetails.get("legal_notice") not in appdetails.values() or appdetails.get("legal_notice") == None:
         embed.set_footer(text="")
     else:
+        notice = appdetails["legal_notice"]
         snotice = sent_tokenize(notice)
         notice = " ".join([str(item) for item in snotice[:1]])
         embed.set_footer(text=cleanhtml(notice))
@@ -72,10 +71,15 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
     embed.add_field(name="Developers: ",
                     value=dev, inline=True)
 
-    # Checking if game is free to display Free instead of Price.
+    # Price checks for games.
+
+    price = appdetails.get("price_overview")
 
     if appdetails["is_free"] == True:
         embed.add_field(name="Price: ", value="Free", inline=True)
+
+    elif appdetails["release_date"]["coming_soon"] == True and price is None:
+        embed.add_field(name="Price: ", value="Coming Soon.", inline=True)
 
     elif price.get("initial_formatted") != "":
         embed.add_field(name="Price: ", value="~~{}~~".format(
@@ -83,7 +87,7 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
 
     else:
         embed.add_field(
-            name="Price: ", value=appdetails.get("price_overview")["final_formatted"], inline=True)
+            name="Price: ", value=price["final_formatted"], inline=True)
 
     await ctx.respond(embed)
 

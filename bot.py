@@ -4,7 +4,6 @@ import os
 import logging
 from dotenv import load_dotenv
 import lavasnek_rs
-import ipaddress
 
 load_dotenv()
 
@@ -12,6 +11,7 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 LAVALINK_HOST = os.getenv("LAVALINK_HOST")
 LAVALINK_PASSWORD = os.getenv("LAVALINK_PASSWORD")
+LAVALINK_PORT = os.getenv("LAVALINK_PORT")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -53,9 +53,9 @@ async def on_shard_ready(
     """Event that triggers when the hikari gateway is ready."""
     builder = (
         lavasnek_rs.LavalinkBuilder(event.my_user.id, DISCORD_TOKEN)
-        .set_host("192.168.1.97")
+        .set_host(LAVALINK_HOST)
         .set_password(str(LAVALINK_PASSWORD))
-        .set_port(int(2333))
+        .set_port(int(LAVALINK_PORT))
         .set_start_gateway(False)
         # We set start gateway False because hikari can handle
         # voice events for us.
