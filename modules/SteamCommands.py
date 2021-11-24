@@ -11,6 +11,8 @@ import requests
 import nltk
 import asyncio
 from hashashin.search import SteamSearch
+import locale
+
 
 nltk.download('punkt')
 
@@ -25,7 +27,7 @@ component = tanjun.Component()
 @component.with_slash_command
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("search", "Search for a game.")
-async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
+async def command_search(ctx: tanjun.abc.SlashContext, game: str) -> None:
 
     results = await SteamSearch(game)
 
@@ -96,7 +98,7 @@ async def command_search(ctx: tanjun.abc.Context, game: str) -> None:
 @tanjun.with_str_slash_option("id", "Steam Profile Name")
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("achieve", "Players Achievements")
-async def player_achievement(ctx: tanjun.abc.Context, game: str, id: str) -> None:
+async def player_achievement(ctx: tanjun.abc.SlashContext, game: str, id: str) -> None:
 
     results = await SteamSearch(game)
 
@@ -133,7 +135,7 @@ async def player_achievement(ctx: tanjun.abc.Context, game: str, id: str) -> Non
 @component.with_slash_command
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("update", "Game Updates.")
-async def game_updates(ctx: tanjun.abc.Context, game: str) -> None:
+async def game_updates(ctx: tanjun.abc.SlashContext, game: str) -> None:
 
     results = await SteamSearch(game)
 
@@ -192,7 +194,7 @@ async def game_updates(ctx: tanjun.abc.Context, game: str) -> None:
 @component.with_slash_command
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("count", "Number of Players")
-async def count(ctx: tanjun.abc.Context, game: str) -> None:
+async def count(ctx: tanjun.abc.SlashContext, game: str) -> None:
     results = await SteamSearch(game)
 
     appID = results[0]
@@ -212,6 +214,39 @@ async def count(ctx: tanjun.abc.Context, game: str) -> None:
 
         await ctx.respond("There are currently " + "`{}`".format(player_count) + " playing {}.".format(name))
 
+@component.with_slash_command
+@tanjun.as_slash_command("specials", "Returns Current Steam Specials.")
+async def specials(ctx: tanjun.abc.SlashContext) -> None:
+
+    locale.setlocale(locale.LC_ALL,"en_US.UTF-8")
+
+    sdata = (requests.get("http://store.steampowered.com/api/featuredcategories/&l=english")).json()
+
+    specials = sdata["specials"]["items"]
+
+    special1 = specials[0]
+    special2 = specials[1]
+    special3 = specials[2]
+    special4 = specials[3]
+    special5 = specials[4]
+
+    embed = hikari.Embed(
+        title="Specials",
+        url="https://store.steampowered.com/search/?specials=1",
+        color=hikari.Color(0xE6E6FA)
+    )
+
+    embed.add_field(name = special1["name"], value = "Price: " + locale.currency(float(special1["final_price"]) / 100.0) + "\nDiscount Ends: " + datetime.datetime.fromtimestamp(special1["discount_expiration"]).strftime('%m/%d/%Y'), inline=False)
+
+    embed.add_field(name = special2["name"], value = "Price: " + locale.currency(float(special2["final_price"]) / 100.0) + "\nDiscount Ends: " + datetime.datetime.fromtimestamp(special2["discount_expiration"]).strftime('%m/%d/%Y'), inline=False)
+
+    embed.add_field(name = special3["name"], value = "Price: " + locale.currency(float(special3["final_price"]) / 100.0) + "\nDiscount Ends: " + datetime.datetime.fromtimestamp(special3["discount_expiration"]).strftime('%m/%d/%Y'), inline=False)
+
+    embed.add_field(name = special4["name"], value = "Price: " + locale.currency(float(special4["final_price"]) / 100.0) + "\nDiscount Ends: " + datetime.datetime.fromtimestamp(special4["discount_expiration"]).strftime('%m/%d/%Y'), inline=False)
+
+    embed.add_field(name = special5["name"], value = "Price: " + locale.currency(float(special5["final_price"]) / 100.0) + "\nDiscount Ends: " + datetime.datetime.fromtimestamp(special5["discount_expiration"]).strftime('%m/%d/%Y'), inline=False)
+
+    await ctx.respond(embed)
 
 @tanjun.as_loader
 def load_component(client: tanjun.abc.Client) -> None:

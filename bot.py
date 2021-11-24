@@ -23,10 +23,10 @@ client = tanjun.Client.from_gateway_bot(
 
 class EventHandler:
     """Handles events from the Lavalink server."""
-
-    async def track_start(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
+    async def track_start(self, ctx: tanjun.abc.Context, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         """Handles track start events."""
         print(f"Track started on guild: {event.guild_id}")
+
 
     async def track_finish(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
         """Handles track finish events."""
