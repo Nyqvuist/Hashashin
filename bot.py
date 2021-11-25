@@ -23,12 +23,11 @@ client = tanjun.Client.from_gateway_bot(
 
 class EventHandler:
     """Handles events from the Lavalink server."""
-    async def track_start(self, ctx: tanjun.abc.Context, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
+    async def track_start(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         """Handles track start events."""
         print(f"Track started on guild: {event.guild_id}")
 
-
-    async def track_finish(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
+    async def track_finish(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
         """Handles track finish events."""
         print(f"Track finished on guild: {event.guild_id}")
 
@@ -53,9 +52,9 @@ async def on_shard_ready(
     """Event that triggers when the hikari gateway is ready."""
     builder = (
         lavasnek_rs.LavalinkBuilder(event.my_user.id, DISCORD_TOKEN)
-        .set_host(LAVALINK_HOST)
-        .set_password(str(LAVALINK_PASSWORD))
-        .set_port(int(LAVALINK_PORT))
+        .set_host(os.environ[LAVALINK_HOST])
+        .set_password(os.environ[LAVALINK_PASSWORD])
+        .set_port(int(os.environ[LAVALINK_PORT]))
         .set_start_gateway(False)
         # We set start gateway False because hikari can handle
         # voice events for us.
