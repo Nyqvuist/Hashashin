@@ -15,19 +15,14 @@ LAVALINK_PORT = os.getenv("LAVALINK_PORT")
 
 logging.basicConfig(level=logging.INFO)
 
-bot = hikari.GatewayBot(DISCORD_TOKEN)
-
-client = tanjun.Client.from_gateway_bot(
-    bot, declare_global_commands=True, mention_prefix=True)
-
-
 class EventHandler:
     """Handles events from the Lavalink server."""
-    async def track_start(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
+
+    async def track_start(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackStart) -> None:
         """Handles track start events."""
         print(f"Track started on guild: {event.guild_id}")
 
-    async def track_finish(self, lavalink: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
+    async def track_finish(self, _: lavasnek_rs.Lavalink, event: lavasnek_rs.TrackFinish) -> None:
         """Handles track finish events."""
         print(f"Track finished on guild: {event.guild_id}")
 
@@ -42,6 +37,12 @@ class EventHandler:
         if skip and node:
             if not node.queue and not node.now_playing:
                 await lavalink.stop(event.guild_id)
+
+bot = hikari.GatewayBot(DISCORD_TOKEN)
+
+client = tanjun.Client.from_gateway_bot(
+    bot, declare_global_commands=True, mention_prefix=True)
+
 
 
 @client.with_listener(hikari.ShardReadyEvent)
@@ -68,8 +69,7 @@ async def on_shard_ready(
 @client.with_listener(hikari.VoiceStateUpdateEvent)
 async def on_voice_state_update(
     event: hikari.VoiceStateUpdateEvent,
-    lavalink: lavasnek_rs.Lavalink = tanjun.injected(
-        type=lavasnek_rs.Lavalink),
+    lavalink: lavasnek_rs.Lavalink = tanjun.injected(type=lavasnek_rs.Lavalink),
 ) -> None:
     """Passes voice state updates to lavalink."""
     await lavalink.raw_handle_event_voice_state_update(
@@ -83,8 +83,7 @@ async def on_voice_state_update(
 @client.with_listener(hikari.VoiceServerUpdateEvent)
 async def on_voice_server_update(
     event: hikari.VoiceServerUpdateEvent,
-    lavalink: lavasnek_rs.Lavalink = tanjun.injected(
-        type=lavasnek_rs.Lavalink),
+    lavalink: lavasnek_rs.Lavalink = tanjun.injected(type=lavasnek_rs.Lavalink),
 ) -> None:
     """Passes voice server updates to lavalink."""
     if event.endpoint is not None:
@@ -103,5 +102,7 @@ async def on_started(event: hikari.StartedEvent) -> None:
 for filename in os.listdir("./modules"):
     if filename.endswith('.py'):
         client.load_modules(f"modules.{filename[:-3]}")
+
+
 
 bot.run()
