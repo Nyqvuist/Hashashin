@@ -24,6 +24,7 @@ async def _join_voice(ctx: tanjun.abc.Context, lavalink: lavasnek_rs.Lavalink) -
 
 
 
+
 @music.with_slash_command
 @tanjun.with_str_slash_option("song", "Song title or youtube link.")
 @tanjun.as_slash_command("play", "Play a song, or add to queue.")
