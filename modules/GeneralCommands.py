@@ -11,7 +11,7 @@ async def roll_d20(ctx: tanjun.abc.SlashContext) -> None:
 
     roll = random.randint(1, 20)
 
-    await ctx.respond(ctx.author + " rolled a " + roll + "!", delete_after=60)
+    await ctx.respond(ctx.author + " rolled a " + str(roll) + "!", delete_after=60)
     
 
 @tanjun.as_loader
