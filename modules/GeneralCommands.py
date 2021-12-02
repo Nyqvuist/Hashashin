@@ -3,13 +3,10 @@ import hikari
 import random
 import typing
 
-from tanjun.parsing import Argument
-
 component = tanjun.Component()
 
 
 @component.with_slash_command
-
 @tanjun.with_int_slash_option("coin", "Flip a coin", default=None)
 @tanjun.with_int_slash_option("d6", "Roll a d6 dice.", default=None)
 @tanjun.with_int_slash_option("d20", "Roll a d20 dice.", default=None)
