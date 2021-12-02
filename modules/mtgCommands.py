@@ -10,7 +10,7 @@ component = tanjun.Component()
 @tanjun.as_slash_command("mtg-card", "Look up a certain card.")
 async def mtg_card(ctx:tanjun.abc.SlashContext, card:str):
 
-    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card))).json()
+    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card.lower()))).json()
 
     card = mtgdata.get("cards")[0]
 
@@ -22,7 +22,7 @@ async def mtg_card(ctx:tanjun.abc.SlashContext, card:str):
 @tanjun.as_slash_command("mtg-rulings", "Look up cards ruling.")
 async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
 
-    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card))).json()
+    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card.lower()))).json()
 
     card = mtgdata.get("cards")[0]
 
@@ -46,7 +46,7 @@ async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
 @tanjun.as_slash_command("mtg-list", "Look up a list of cards.")
 async def mtg_list(ctx:tanjun.abc.SlashContext, card:str):
 
-    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=7&contains=imageUrl".format(card))).json()
+    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=7&contains=imageUrl".format(card.lower()))).json()
 
     cards = mtgdata.get("cards")
         

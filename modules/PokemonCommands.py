@@ -10,7 +10,7 @@ component = tanjun.Component()
 @tanjun.as_slash_command("pokemon-nature", "Get nature information of a pokemon.")
 async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
     
-    pokemondata = (requests.get("https://pokeapi.co/api/v2/nature/{}/".format(nature))).json()
+    pokemondata = (requests.get("https://pokeapi.co/api/v2/nature/{}/".format(nature.lower()))).json()
     move_preference = pokemondata['move_battle_style_preferences']
 
     embed= hikari.Embed(
@@ -27,7 +27,6 @@ async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
         embed.add_field(name=x['move_battle_style']['name'].title(), value = "High HP Preference: " + str(x['high_hp_preference']) + "%" + "\nLow HP Preference: " + str(x['low_hp_preference']) + "%", inline=False)
 
     await ctx.respond(embed)
-
 
 
 
