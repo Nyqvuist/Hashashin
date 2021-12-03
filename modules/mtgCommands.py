@@ -10,11 +10,16 @@ component = tanjun.Component()
 @tanjun.as_slash_command("mtg-card", "Look up a certain card.")
 async def mtg_card(ctx:tanjun.abc.SlashContext, card:str):
 
-    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card.lower()))).json()
+    try:
 
-    card = mtgdata.get("cards")[0]
+        mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card.lower()))).json()
 
-    await ctx.respond(card["imageUrl"])
+        card = mtgdata.get("cards")[0]
+
+        await ctx.respond(card["imageUrl"])
+    
+    except IndexError:
+        await ctx.respond("Please double check the spelling of the card.")
 
 
 @component.with_slash_command
@@ -22,23 +27,30 @@ async def mtg_card(ctx:tanjun.abc.SlashContext, card:str):
 @tanjun.as_slash_command("mtg-rulings", "Look up cards ruling.")
 async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
 
-    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card.lower()))).json()
 
-    card = mtgdata.get("cards")[0]
+    try:
+        mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=1&contains=imageUrl".format(card.lower()))).json()
 
-    rulings = card["rulings"]        
+        card = mtgdata.get("cards")[0]
 
-    embed = hikari.Embed(
-        title = "Rulings.",
-        color = hikari.Color(0xFF0000)
-    )
+        rulings = card["rulings"]        
 
-    embed.set_thumbnail(card["imageUrl"])
+        embed = hikari.Embed(
+            title = "Rulings.",
+            color = hikari.Color(0xFF0000)
+        )
 
-    for x in rulings:
-        embed.add_field(name="Date: {}".format(x["date"]), value= x["text"], inline=False)
+        embed.set_thumbnail(card["imageUrl"])
 
-    await ctx.respond(embed)
+        for x in rulings:
+            embed.add_field(name="Date: {}".format(x["date"]), value= x["text"], inline=False)
+
+        await ctx.respond(embed)
+    
+    except IndexError:
+        await ctx.respond("Please double check the spelling of the card.")
+
+
 
 
 @component.with_slash_command
@@ -46,21 +58,25 @@ async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
 @tanjun.as_slash_command("mtg-list", "Look up a list of cards.")
 async def mtg_list(ctx:tanjun.abc.SlashContext, card:str):
 
-    mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=7&contains=imageUrl".format(card.lower()))).json()
+    try:
 
-    cards = mtgdata.get("cards")
-        
+        mtgdata = (requests.get("https://api.magicthegathering.io/v1/cards?name={}&pageSize=7&contains=imageUrl".format(card.lower()))).json()
 
-    embed = hikari.Embed(
-        title = "Cards",
-        color = hikari.Color(0x228b22)
-    )
+        cards = mtgdata.get("cards")
+            
+
+        embed = hikari.Embed(
+            title = "Cards",
+            color = hikari.Color(0x228b22)
+        )
 
 
-    for x in cards:
-        embed.add_field(name=x["name"], value="Set: " + x["setName"], inline=False)
+        for x in cards:
+            embed.add_field(name=x["name"], value="Set: " + x["setName"], inline=False)
 
-    await ctx.respond(embed)
+        await ctx.respond(embed)
+    except IndexError:
+        await ctx.respond("Please double check the spelling of the card.")
 
 
 @tanjun.as_loader
