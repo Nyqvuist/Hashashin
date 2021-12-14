@@ -2,6 +2,7 @@ from hikari.embeds import Embed
 import tanjun
 import hikari
 import requests
+import difflib
 
 component = tanjun.Component()
 
@@ -10,7 +11,12 @@ component = tanjun.Component()
 @tanjun.as_slash_command("pokemon-nature", "Get nature information of a pokemon.")
 async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
     
-    pokemondata = (requests.get("https://pokeapi.co/api/v2/nature/{}/".format(nature.lower()))).json()
+    possibilities = ["adamant","bashful","bold","brave","calm","careful","docile","gentle","hardy","hasty","impish","jolly","lax","lonely","mild","modest","naive","naughty","quiet","quirky","rash","relaxed","sassy","serious","timid"]
+    
+    matches = difflib.get_close_matches(
+        nature.lower(), possibilities, n=1, cutoff=0.3)
+    
+    pokemondata = (requests.get("https://pokeapi.co/api/v2/nature/{}/".format(matches[0].lower()))).json()
     move_preference = pokemondata['move_battle_style_preferences']
 
     embed= hikari.Embed(
