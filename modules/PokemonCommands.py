@@ -52,14 +52,27 @@ async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
         pokemondata = (requests.get("https://pokeapi.co/api/v2/pokemon/{}/encounters".format(pokemon.lower()))).json()
 
         vlist = []
+        dlist = []
+        
 
         for x in pokemondata:
             version = x["version_details"][0]
             if version["version"]["name"] == matches[0]:
                 vlist.append(x)
+            else:
+                if version["version"]["name"]:
+                    dlist.append(version["version"]["name"])
+                    dlist = list(set(dlist))
 
         if vlist == []:
-            await ctx.respond("This pokemon is either not in this version or cannot be found in wild grass.")
+            embed = hikari.Embed(
+                title = pokemon.title() + " can be found in these versions!",
+                color = hikari.Color(0xee1515)
+                )
+            for x in dlist:
+                embed.add_field(name=x.title(), value="\u200b", inline=True)
+
+            await ctx.respond(embed)
         else:   
             embed = hikari.Embed(
                 title = pokemon.title() + " Routes " "- Version: " + matches[0].title(),
