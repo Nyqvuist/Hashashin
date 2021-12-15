@@ -64,16 +64,7 @@ async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
                     dlist.append(version["version"]["name"])
                     dlist = list(set(dlist))
 
-        if vlist == []:
-            embed = hikari.Embed(
-                title = pokemon.title() + " can be found in these versions!",
-                color = hikari.Color(0xee1515)
-                )
-            for x in dlist:
-                embed.add_field(name=x.title(), value="\u200b", inline=True)
-
-            await ctx.respond(embed)
-        else:   
+        if len(vlist) > 0:
             embed = hikari.Embed(
                 title = pokemon.title() + " Routes " "- Version: " + matches[0].title(),
                 color = hikari.Color(0xee1515)
@@ -85,10 +76,22 @@ async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
                 embed.add_field(name=name.title(), value="Encounter Potential: " + str(version["max_chance"]) + "%", inline=False)
 
             await ctx.respond(embed)
+            
+        elif len(vlist) <= 1 and dlist == []:
+            await ctx.respond("This pokemon cannot be found in wild grass.")
+            
+        elif vlist == [] and len(dlist) > 0:
+            embed = hikari.Embed(
+                title = pokemon.title() + " can be found in these versions!",
+                color = hikari.Color(0xee1515)
+                )
+            for x in dlist:
+                embed.add_field(name=x.title(), value="\u200b", inline=True)
+
+            await ctx.respond(embed)   
+            
     except JSONDecodeError:
         await ctx.respond("Make sure the pokemon's name is typed correctly!")
-
-
 
 
 @tanjun.as_loader
