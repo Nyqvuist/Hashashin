@@ -1,4 +1,5 @@
 from hikari.embeds import Embed
+from hikari.internal.data_binding import JSONDecodeError
 import tanjun
 import hikari
 import requests
@@ -33,6 +34,47 @@ async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
         embed.add_field(name=x['move_battle_style']['name'].title(), value = "High HP Preference: " + str(x['high_hp_preference']) + "%" + "\nLow HP Preference: " + str(x['low_hp_preference']) + "%", inline=False)
 
     await ctx.respond(embed)
+
+
+@component.with_slash_command
+@tanjun.with_str_slash_option("version", "The game version.")
+@tanjun.with_str_slash_option("pokemon", "The specified pokemon.")
+@tanjun.as_slash_command("pokemon-route", "Get location of specific pokemon.")
+async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
+
+
+    try:
+        possibilities = ["red","blue","diamond","pearl","platinum","yellow","gold","silver","crystal","firered","leafgreen","heartgold","soulsilver","ruby","sapphire","emerald","x","y","omega-ruby","alpha-sapphire","black","white"]
+
+        matches = difflib.get_close_matches(
+            version.lower(), possibilities, n=1, cutoff=0.3)
+
+        pokemondata = (requests.get("https://pokeapi.co/api/v2/pokemon/{}/encounters".format(pokemon.lower()))).json()
+
+        vlist = []
+
+        for x in pokemondata:
+            version = x["version_details"][0]
+            if version["version"]["name"] == matches[0]:
+                vlist.append(x)
+
+        if vlist == []:
+            await ctx.respond("This pokemon is either not in this version or cannot be found in wild grass.")
+        else:   
+            embed = hikari.Embed(
+                title = pokemon.title() + " Routes " "- Version: " + matches[0].title(),
+                color = hikari.Color(0xee1515)
+                )
+
+            for y in vlist:
+                version = y["version_details"][0]
+                name = y["location_area"]["name"].replace("-", " ")
+                embed.add_field(name=name.title(), value="Encounter Potential: " + str(version["max_chance"]) + "%", inline=False)
+
+            await ctx.respond(embed)
+    except JSONDecodeError:
+        await ctx.respond("Make sure the pokemon's name is typed correctly!")
+
 
 
 
