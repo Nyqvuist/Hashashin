@@ -50,7 +50,8 @@ async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
     except IndexError:
         await ctx.respond("Please double check the spelling of the card.")
 
-
+    except KeyError:
+        await ctx.respond("This card does not have any rulings.")
 
 
 @component.with_slash_command
