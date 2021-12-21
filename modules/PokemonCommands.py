@@ -42,7 +42,6 @@ async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
 @tanjun.as_slash_command("pokemon-route", "Get location of specific pokemon.")
 async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
 
-
     try:
         possibilities = ["red","blue","diamond","pearl","platinum","yellow","gold","silver","crystal","firered","leafgreen","heartgold","soulsilver","ruby","sapphire","emerald","x","y","omega-ruby","alpha-sapphire","black","white"]
 
