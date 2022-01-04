@@ -37,6 +37,7 @@ async def _play_track(ctx: tanjun.abc.Context, song: str, lavalink: lavasnek_rs.
 
     conn = await lavalink.get_guild_gateway_connection_info(ctx.guild_id)
 
+
     if not conn:
         if not await _join_voice(ctx, lavalink):
             return
@@ -45,6 +46,7 @@ async def _play_track(ctx: tanjun.abc.Context, song: str, lavalink: lavasnek_rs.
         await ctx.respond(f"No tracks found the song: <{song}>", delete_after=10)
         return
 
+
     try:
         await lavalink.play(ctx.guild_id, tracks[0]).requester(ctx.author.id).queue()
 
@@ -52,7 +54,8 @@ async def _play_track(ctx: tanjun.abc.Context, song: str, lavalink: lavasnek_rs.
         await ctx.respond("Unable to join voice. This may be an internal issue.", delete_after=7)
         return
 
-    await ctx.respond(f"Added to queue: `{tracks[0].info.title}`", delete_after=10)
+
+    await ctx.respond(f"Added to queue: `{tracks[0].info.title}`", delete_after=15)
     
 
 @music.with_slash_command
@@ -72,8 +75,6 @@ async def _skip_track(ctx: tanjun.abc.Context, lavalink: lavasnek_rs.Lavalink) -
             await lavalink.stop(ctx.guild_id)
 
     await ctx.respond(f"Skipped: {skip.track.info.title}", delete_after=10)
-
-    
 
 
 @music.with_slash_command

@@ -200,6 +200,9 @@ async def count(ctx: tanjun.abc.SlashContext, game: str) -> None:
     appID = results[0]
     name = results[1]
 
+    gsdata = (requests.get(
+        "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))).json()
+
     codata = (requests.get(
         "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={}".format(appID))).json()
 
@@ -209,10 +212,18 @@ async def count(ctx: tanjun.abc.SlashContext, game: str) -> None:
         await ctx.respond("This game currently does not have players online.")
 
     else:
-
         player_count = codata["response"]["player_count"]
+        appdetails = gsdata.get("{}".format(appID)).get("data")
 
-        await ctx.respond("There are currently " + "`{}`".format(player_count) + " playing {}.".format(name))
+        embed = hikari.Embed(
+            title=name,
+            description="There are currently " + "`{}`".format(player_count) + " playing.",
+            color=hikari.Color(0x808080)
+        )
+
+        embed.set_thumbnail(appdetails["header_image"])
+
+        await ctx.respond(embed)
 
 @component.with_slash_command
 @tanjun.as_slash_command("specials", "Returns Current Steam Specials.")
