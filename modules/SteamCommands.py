@@ -44,6 +44,11 @@ async def command_search(ctx: tanjun.abc.SlashContext, game: str) -> None:
         cleantext = re.sub(cleanr, '', raw_html)
         return cleantext
 
+    # API request to get reviews for games.
+
+    rdata = (requests.get("https://store.steampowered.com/appreviews/{}?json=1".format(appID))).json()
+    print(rdata)
+
     # Accessing data dictionary and assigned them values.
 
     appdetails = gsdata.get("{}".format(appID)).get("data")
@@ -90,6 +95,11 @@ async def command_search(ctx: tanjun.abc.SlashContext, game: str) -> None:
     else:
         embed.add_field(
             name="Price: ", value=price["final_formatted"], inline=True)
+
+    review = rdata["query_summary"]["review_score_desc"]
+    print(review)
+
+    embed.add_field(name="Review:", value = review, inline = True)
 
     await ctx.respond(embed)
 
