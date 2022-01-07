@@ -12,6 +12,7 @@ import nltk
 import asyncio
 from hashashin.search import SteamSearch
 import locale
+import random
 
 
 nltk.download('punkt')
@@ -33,75 +34,8 @@ async def command_search(ctx: tanjun.abc.SlashContext, game: str) -> None:
 
     appID = results[0]
 
-    # API request to then get game details using appID.
-    gsdata = (requests.get(
-        "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))).json()
+    await _game_embed(ctx, appID)
 
-    # Remove html content from description and notice.
-    cleanr = re.compile('<.*?>')
-
-    def cleanhtml(raw_html):
-        cleantext = re.sub(cleanr, '', raw_html)
-        return cleantext
-
-    # API request to get reviews for games.
-
-    rdata = (requests.get("https://store.steampowered.com/appreviews/{}?json=1".format(appID))).json()
-    print(rdata)
-
-    # Accessing data dictionary and assigned them values.
-
-    appdetails = gsdata.get("{}".format(appID)).get("data")
-    description = appdetails.get("short_description")
-
-    embed = hikari.Embed(
-        title=appdetails["name"],
-        url="https://store.steampowered.com/app/{}/".format(appID),
-        description=cleanhtml(description),
-        color=hikari.Color(0x00FFFF)
-    )
-    embed.set_image(appdetails["header_image"])
-    # If statement to check if game has a legal notice or not.
-
-    if appdetails.get("legal_notice") not in appdetails.values() or appdetails.get("legal_notice") == None:
-        embed.set_footer(text="")
-    else:
-        notice = appdetails["legal_notice"]
-        snotice = sent_tokenize(notice)
-        notice = " ".join([str(item) for item in snotice[:1]])
-        embed.set_footer(text=cleanhtml(notice))
-
-    # Adding multiple devs to developer field.
-
-    dev = ", ".join([str(item)
-                     for item in appdetails.get("developers")])
-    embed.add_field(name="Developers: ",
-                    value=dev, inline=True)
-
-    # Price checks for games.
-
-    price = appdetails.get("price_overview")
-
-    if appdetails["is_free"] == True:
-        embed.add_field(name="Price: ", value="Free", inline=True)
-
-    elif appdetails["release_date"]["coming_soon"] == True and price is None:
-        embed.add_field(name="Price: ", value="Coming Soon.", inline=True)
-
-    elif price.get("initial_formatted") != "":
-        embed.add_field(name="Price: ", value="~~{}~~".format(
-            price.get("initial_formatted")) + " " + "**{}**".format(price.get("final_formatted")), inline=True)
-
-    else:
-        embed.add_field(
-            name="Price: ", value=price["final_formatted"], inline=True)
-
-    review = rdata["query_summary"]["review_score_desc"]
-    print(review)
-
-    embed.add_field(name="Review:", value = review, inline = True)
-
-    await ctx.respond(embed)
 
 
 @component.with_slash_command
@@ -268,6 +202,135 @@ async def specials(ctx: tanjun.abc.SlashContext) -> None:
     embed.add_field(name = special5["name"], value = "Price: " + locale.currency(float(special5["final_price"]) / 100.0) + "\nDiscount Ends: " + datetime.datetime.fromtimestamp(special5["discount_expiration"]).strftime('%m/%d/%Y'), inline=False)
 
     await ctx.respond(embed)
+
+@component.with_slash_command
+@tanjun.with_str_slash_option("genre", "The genre of the game.")
+@tanjun.with_str_slash_option("category", "The category of the game")
+@tanjun.as_slash_command("random", "Random game of the given filter.")
+async def random_game(ctx: tanjun.abc.SlashContext.defer(), category: str, genre: str) -> None:
+
+    categories_list = ["Single-player","Multi-player","PvP", "Online PvP","Co-op","Online Co-op"]
+    genres_list = ["Action", "Adventure", "RPG", "Indie", "Racing", "Sports", "Free to Play","Massively Multiplayer", ]
+
+    cmatches = difflib.get_close_matches(
+        category.lower(), categories_list, n=1, cutoff=0.3)
+    
+    gmatches = difflib.get_close_matches(
+        genre.lower(), genres_list, n=1, cutoff=0.3)
+
+    cm = cmatches[0]
+    gm = gmatches[0]
+
+    on = True
+
+    while on:
+        results = await _random_game(ctx)
+        categories = results[0]
+        genres = results[1]
+        for x in categories:
+            if x["description"] == cm:
+                for y in genres:
+                    if y["description"] == gm:
+                        on = False
+        
+
+    appID = results[2]
+
+    await _game_embed(ctx, appID)
+            
+
+
+async def _random_game(ctx:tanjun.abc.Context) -> None:
+
+    gdata = (requests.get("https://api.steampowered.com/IStoreService/GetAppList/v1/?&include_games=true&include_dlc=false&key={}".format(STEAM_KEY))).json()
+    apps = gdata["response"]["apps"]
+
+    choice = random.choice(apps)
+
+    appid = choice["appid"]
+
+    gddata = (requests.get(
+        "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appid))).json()
+
+    appdetails = gddata.get("{}".format(appid)).get("data")
+
+    categories = appdetails.get("categories")
+    genres = appdetails.get("genres")
+
+    return categories, genres, appid
+
+
+async def _game_embed(ctx:tanjun.abc.Context, appID) -> None:
+    
+    # API request to then get game details using appID.
+    gsdata = (requests.get(
+        "https://store.steampowered.com/api/appdetails/?appids={}&l=english".format(appID))).json()
+
+    # Remove html content from description and notice.
+    cleanr = re.compile('<.*?>')
+
+    def cleanhtml(raw_html):
+        cleantext = re.sub(cleanr, '', raw_html)
+        return cleantext
+
+    # API request to get reviews for games.
+
+    rdata = (requests.get("https://store.steampowered.com/appreviews/{}?json=1".format(appID))).json()
+
+    # Accessing data dictionary and assigned them values.
+
+    appdetails = gsdata.get("{}".format(appID)).get("data")
+    description = appdetails.get("short_description")
+
+    embed = hikari.Embed(
+        title=appdetails["name"],
+        url="https://store.steampowered.com/app/{}/".format(appID),
+        description=cleanhtml(description),
+        color=hikari.Color(0x00FFFF)
+    )
+    embed.set_image(appdetails["header_image"])
+    # If statement to check if game has a legal notice or not.
+
+    if appdetails.get("legal_notice") not in appdetails.values() or appdetails.get("legal_notice") == None:
+        embed.set_footer(text="")
+    else:
+        notice = appdetails["legal_notice"]
+        snotice = sent_tokenize(notice)
+        notice = " ".join([str(item) for item in snotice[:1]])
+        embed.set_footer(text=cleanhtml(notice))
+
+    # Adding multiple devs to developer field.
+
+    dev = ", ".join([str(item)
+                     for item in appdetails.get("developers")])
+    embed.add_field(name="Developers: ",
+                    value=dev, inline=True)
+
+    # Price checks for games.
+
+    price = appdetails.get("price_overview")
+
+    if appdetails["is_free"] == True:
+        embed.add_field(name="Price: ", value="Free", inline=True)
+
+    elif appdetails["release_date"]["coming_soon"] == True and price is None:
+        embed.add_field(name="Price: ", value="Coming Soon.", inline=True)
+
+    elif price.get("initial_formatted") != "":
+        embed.add_field(name="Price: ", value="~~{}~~".format(
+            price.get("initial_formatted")) + " " + "**{}**".format(price.get("final_formatted")), inline=True)
+
+    else:
+        embed.add_field(
+            name="Price: ", value=price["final_formatted"], inline=True)
+
+    review = rdata["query_summary"]["review_score_desc"]
+
+    embed.add_field(name="Review:", value = review, inline = True)
+
+    await ctx.respond(embed)
+
+
 
 @tanjun.as_loader
 def load_component(client: tanjun.abc.Client) -> None:
