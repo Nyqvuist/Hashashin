@@ -210,16 +210,13 @@ async def specials(ctx: tanjun.abc.SlashContext) -> None:
 async def random_game(ctx: tanjun.abc.SlashContext, category: str, genre: str) -> None:
 
     categories_list = ["Single-player","Multi-player","PvP", "Online PvP","Co-op","Online Co-op"]
-    genres_list = ["Action", "Adventure", "RPG", "Indie", "Racing", "Sports", "Free to Play","Massively Multiplayer", ]
+    genres_list = ["Action", "Adventure", "rpg", "Indie", "Racing", "Sports", "Free to Play","Massively Multiplayer", ]
 
     cmatches = difflib.get_close_matches(
         category.lower(), categories_list, n=1, cutoff=0.3)
     
     gmatches = difflib.get_close_matches(
         genre.lower(), genres_list, n=1, cutoff=0.3)
-
-    cm = cmatches[0]
-    gm = gmatches[0]
 
     await ctx.respond("Your random game is now loading...")
 
@@ -230,12 +227,11 @@ async def random_game(ctx: tanjun.abc.SlashContext, category: str, genre: str) -
         categories = results[0]
         genres = results[1]
         for x in categories:
-            if x["description"] == cm:
+            if x["description"].lower() == cmatches[0].lower():
                 for y in genres:
-                    if y["description"] == gm:
+                    if y["description"].lower() == gmatches[0].lower():
                         on = False
         
-
     appID = results[2]
 
     await _game_embed(ctx, appID)
