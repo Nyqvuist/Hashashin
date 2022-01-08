@@ -204,10 +204,10 @@ async def specials(ctx: tanjun.abc.SlashContext) -> None:
     await ctx.respond(embed)
 
 @component.with_slash_command
-@tanjun.with_str_slash_option("genre", "The genre of the game.")
-@tanjun.with_str_slash_option("category", "The category of the game")
+@tanjun.with_str_slash_option("genre", "Action, Adventure, RPG, Indie, etc.")
+@tanjun.with_str_slash_option("category", "Single-player, Multi-player, PvP, etc.")
 @tanjun.as_slash_command("random", "Random game of the given filter.")
-async def random_game(ctx: tanjun.abc.SlashContext.defer(), category: str, genre: str) -> None:
+async def random_game(ctx: tanjun.abc.SlashContext, category: str, genre: str) -> None:
 
     categories_list = ["Single-player","Multi-player","PvP", "Online PvP","Co-op","Online Co-op"]
     genres_list = ["Action", "Adventure", "RPG", "Indie", "Racing", "Sports", "Free to Play","Massively Multiplayer", ]
@@ -220,6 +220,8 @@ async def random_game(ctx: tanjun.abc.SlashContext.defer(), category: str, genre
 
     cm = cmatches[0]
     gm = gmatches[0]
+
+    await ctx.respond("Your random game is now loading...")
 
     on = True
 
@@ -328,7 +330,7 @@ async def _game_embed(ctx:tanjun.abc.Context, appID) -> None:
 
     embed.add_field(name="Review:", value = review, inline = True)
 
-    await ctx.respond(embed)
+    await ctx.edit_last_response(content="", embed=embed)
 
 
 
