@@ -37,6 +37,18 @@ async def roll_d20(ctx: tanjun.abc.SlashContext, d20:typing.Optional[int], d6:ty
 
         await ctx.respond("Please choose a dice or coin!", delete_after=30)
 
+@component.with_slash_command
+@tanjun.with_str_slash_option("option4", "Fourth Option.", default=None)
+@tanjun.with_str_slash_option("option3", "Third option.", default=None)
+@tanjun.with_str_slash_option("option2", "Second option.")
+@tanjun.with_str_slash_option("option1", "First option.")
+@tanjun.with_str_slash_option("message", "Create a poll message.")
+@tanjun.as_slash_command("poll", "Create a poll.")
+async def create_poll(ctx: tanjun.abc.SlashContext, Message: str, option1: str, option2: str, option3: typing.Optional[str], option4: typing.Optional[str]) -> None:
+
+    await ctx.respond("WIP")
+
+
 
     
 
