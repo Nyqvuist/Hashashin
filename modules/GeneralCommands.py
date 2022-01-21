@@ -17,13 +17,13 @@ async def roll_d20(ctx: tanjun.abc.SlashContext, d20:typing.Optional[int], d6:ty
 
         roll = random.randint(1, 20)
 
-        await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!", delete_after=60)
+        await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!")
 
     elif d6:
 
         roll = random.randint(1, 6)
 
-        await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!", delete_after=60)
+        await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!")
     
     elif coin:
 
@@ -31,11 +31,11 @@ async def roll_d20(ctx: tanjun.abc.SlashContext, d20:typing.Optional[int], d6:ty
 
         roll = random.choice(coinflip)
 
-        await ctx.respond("**" + ctx.member.display_name + "**" + " flipped " + str(roll) + "!", delete_after=60)
+        await ctx.respond("**" + ctx.member.display_name + "**" + " flipped " + str(roll) + "!")
     
     else:
 
-        await ctx.respond("Please choose a dice or coin!", delete_after=30)
+        await ctx.respond("Please choose a dice or coin!", delete_after=50)
 
 @component.with_slash_command
 @tanjun.with_str_slash_option("option4", "Fourth Option.", default=None)
