@@ -3,53 +3,36 @@ import hikari
 import random
 import typing
 
-component = tanjun.Component()
+
+dice_group = tanjun.slash_command_group("roll", "Roll a dice/coin.")
 
 
-@component.with_slash_command
-@tanjun.with_int_slash_option("coin", "Flip a coin", default=None)
-@tanjun.with_int_slash_option("d6", "Roll a d6 dice.", default=None)
-@tanjun.with_int_slash_option("d20", "Roll a d20 dice.", default=None)
-@tanjun.as_slash_command("roll", "Roll a dice")
-async def roll_d20(ctx: tanjun.abc.SlashContext, d20:typing.Optional[int], d6:typing.Optional[int], coin:typing.Optional[int]) -> None:
+@dice_group.with_command
+@tanjun.as_slash_command("d20", "Roll a d20")
+async def roll_d20(ctx: tanjun.abc.SlashContext) -> None:
+    roll = random.randint(1, 20)
 
-    if d20:
+    await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!")
 
-        roll = random.randint(1, 20)
+@dice_group.with_command
+@tanjun.as_slash_command("d6", "Roll a d6")
+async def roll_d6(ctx: tanjun.abc.SlashContext) -> None:
+    roll = random.randint(1, 6)
 
-        await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!")
+    await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!")
 
-    elif d6:
+@dice_group.with_command
+@tanjun.as_slash_command("coin", "Flip a coin")
+async def flip_coin(ctx: tanjun.abc.SlashContext) -> None:
+    coinflip = ['Heads','Tails']
 
-        roll = random.randint(1, 6)
+    roll = random.choice(coinflip)
 
-        await ctx.respond("**" + ctx.member.display_name + "**" + " rolled a " + str(roll) + "!")
-    
-    elif coin:
-
-        coinflip = ['Heads','Tails']
-
-        roll = random.choice(coinflip)
-
-        await ctx.respond("**" + ctx.member.display_name + "**" + " flipped " + str(roll) + "!")
-    
-    else:
-
-        await ctx.respond("Please choose a dice or coin!", delete_after=50)
-
-@component.with_slash_command
-@tanjun.with_str_slash_option("option4", "Fourth Option.", default=None)
-@tanjun.with_str_slash_option("option3", "Third option.", default=None)
-@tanjun.with_str_slash_option("option2", "Second option.")
-@tanjun.with_str_slash_option("option1", "First option.")
-@tanjun.with_str_slash_option("message", "Create a poll message.")
-@tanjun.as_slash_command("poll", "Create a poll.")
-async def create_poll(ctx: tanjun.abc.SlashContext, Message: str, option1: str, option2: str, option3: typing.Optional[str], option4: typing.Optional[str]) -> None:
-
-    await ctx.respond("WIP")
+    await ctx.respond("**" + ctx.member.display_name + "**" + " flipped " + str(roll) + "!")
 
 
 
+component = tanjun.Component().add_slash_command(dice_group)
     
 
 @tanjun.as_loader

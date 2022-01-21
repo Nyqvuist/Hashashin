@@ -5,11 +5,11 @@ import hikari
 import requests
 import difflib
 
-component = tanjun.Component()
+poke_group = tanjun.slash_command_group("pokemon", "Info about Pokemons")
 
-@component.with_slash_command
+@poke_group.with_command
 @tanjun.with_str_slash_option("nature", "Nature of pokemon.")
-@tanjun.as_slash_command("pokemon-nature", "Get nature information of a pokemon.")
+@tanjun.as_slash_command("nature", "Get nature information of a pokemon.")
 async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
     
     possibilities = ["adamant","bashful","bold","brave","calm","careful","docile","gentle","hardy","hasty","impish","jolly","lax","lonely","mild","modest","naive","naughty","quiet","quirky","rash","relaxed","sassy","serious","timid"]
@@ -36,10 +36,10 @@ async def pokemon_nature(ctx:tanjun.abc.SlashContext, nature:str):
     await ctx.respond(embed)
 
 
-@component.with_slash_command
+@poke_group.with_command
 @tanjun.with_str_slash_option("version", "The game version.")
 @tanjun.with_str_slash_option("pokemon", "The specified pokemon.")
-@tanjun.as_slash_command("pokemon-route", "Get location of specific pokemon.")
+@tanjun.as_slash_command("route", "Get location of specific pokemon.")
 async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
 
     try:
@@ -92,6 +92,7 @@ async def pokemon_route(ctx:tanjun.abc.SlashContext, pokemon:str, version:str):
     except JSONDecodeError:
         await ctx.respond("Make sure the pokemon's name is typed correctly!")
 
+component = tanjun.Component().add_slash_command(poke_group)
 
 @tanjun.as_loader
 def load_component(client: tanjun.abc.Client) -> None:

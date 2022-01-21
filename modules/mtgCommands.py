@@ -3,11 +3,11 @@ import tanjun
 import hikari
 import requests
 
-component = tanjun.Component()
+mtg_group = tanjun.slash_command_group("mtg", "Info about MTG cards.")
 
-@component.with_slash_command
+@mtg_group.with_command
 @tanjun.with_str_slash_option("card", "Card to pull up.")
-@tanjun.as_slash_command("mtg-card", "Look up a certain card.")
+@tanjun.as_slash_command("card", "Look up a certain card.")
 async def mtg_card(ctx:tanjun.abc.SlashContext, card:str):
 
     try:
@@ -22,9 +22,9 @@ async def mtg_card(ctx:tanjun.abc.SlashContext, card:str):
         await ctx.respond("Please double check the spelling of the card.")
 
 
-@component.with_slash_command
+@mtg_group.with_command
 @tanjun.with_str_slash_option("card", "Card to pull up.")
-@tanjun.as_slash_command("mtg-rulings", "Look up cards ruling.")
+@tanjun.as_slash_command("rulings", "Look up cards ruling.")
 async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
 
 
@@ -54,9 +54,9 @@ async def mtg_rulings(ctx:tanjun.abc.SlashContext, card:str):
         await ctx.respond("This card does not have any rulings.")
 
 
-@component.with_slash_command
+@mtg_group.with_command
 @tanjun.with_str_slash_option("card", "Card with similar names to pull up.")
-@tanjun.as_slash_command("mtg-list", "Look up a list of cards.")
+@tanjun.as_slash_command("list", "Look up a list of cards.")
 async def mtg_list(ctx:tanjun.abc.SlashContext, card:str):
 
     try:
@@ -78,6 +78,9 @@ async def mtg_list(ctx:tanjun.abc.SlashContext, card:str):
         await ctx.respond(embed)
     except IndexError:
         await ctx.respond("Please double check the spelling of the card.")
+
+
+component = tanjun.Component().add_slash_command(mtg_group)
 
 
 @tanjun.as_loader

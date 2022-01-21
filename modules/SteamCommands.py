@@ -326,7 +326,12 @@ async def _game_embed(ctx:tanjun.abc.Context, appID) -> None:
 
     embed.add_field(name="Review:", value = review, inline = True)
 
-    await ctx.edit_last_response(content="", embed=embed)
+
+    try:
+        await ctx.edit_last_response(content="", embed=embed)
+
+    except LookupError:
+        await ctx.respond(embed)
 
 
 
