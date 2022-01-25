@@ -22,10 +22,10 @@ STEAM_KEY = os.environ.get("STEAM_KEY")
 api = WebAPI(key=STEAM_KEY)
 
 
-component = tanjun.Component()
+steam_group = tanjun.slash_command_group("steam", "Info about steam games.")
 
 
-@component.with_slash_command
+@steam_group.with_command
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("search", "Search for a game.")
 async def command_search(ctx: tanjun.abc.SlashContext, game: str) -> None:
@@ -38,7 +38,7 @@ async def command_search(ctx: tanjun.abc.SlashContext, game: str) -> None:
 
 
 
-@component.with_slash_command
+@steam_group.with_command
 @tanjun.with_str_slash_option("id", "Steam Profile Name")
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("achieve", "Players Achievements")
@@ -76,7 +76,7 @@ async def player_achievement(ctx: tanjun.abc.SlashContext, game: str, id: str) -
                 await ctx.respond(id + " has completed " + str(len(alist)) + " out of " + str(len(achievements)) + " achievements in " + name + ".")
 
 
-@component.with_slash_command
+@steam_group.with_command
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("update", "Game Updates.")
 async def game_updates(ctx: tanjun.abc.SlashContext, game: str) -> None:
@@ -135,7 +135,7 @@ async def game_updates(ctx: tanjun.abc.SlashContext, game: str) -> None:
     await ctx.respond(embed=embed)
 
 
-@component.with_slash_command
+@steam_group.with_command
 @tanjun.with_str_slash_option("game", "The name of the game.")
 @tanjun.as_slash_command("count", "Number of Players")
 async def count(ctx: tanjun.abc.SlashContext, game: str) -> None:
@@ -169,7 +169,7 @@ async def count(ctx: tanjun.abc.SlashContext, game: str) -> None:
 
         await ctx.respond(embed)
 
-@component.with_slash_command
+@steam_group.with_command
 @tanjun.as_slash_command("specials", "Returns Current Steam Specials.")
 async def specials(ctx: tanjun.abc.SlashContext) -> None:
 
@@ -203,7 +203,7 @@ async def specials(ctx: tanjun.abc.SlashContext) -> None:
 
     await ctx.respond(embed)
 
-@component.with_slash_command
+@steam_group.with_command
 @tanjun.with_str_slash_option("genre", "Action, Adventure, RPG, Indie, etc.")
 @tanjun.with_str_slash_option("category", "Single-player, Multi-player, PvP, etc.")
 @tanjun.as_slash_command("random", "Random game of the given filter.")
@@ -333,7 +333,7 @@ async def _game_embed(ctx:tanjun.abc.Context, appID) -> None:
     except LookupError:
         await ctx.respond(embed)
 
-
+component = tanjun.Component().add_slash_command(steam_group)
 
 @tanjun.as_loader
 def load_component(client: tanjun.abc.Client) -> None:
