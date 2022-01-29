@@ -10,10 +10,6 @@ load_dotenv()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
-LAVALINK_HOST = os.getenv("LAVALINK_HOST")
-LAVALINK_PASSWORD = os.getenv("LAVALINK_PASSWORD")
-LAVALINK_PORT = os.getenv("LAVALINK_PORT")
-
 logging.basicConfig(level=logging.INFO)
 
 bot = hikari.GatewayBot(DISCORD_TOKEN)
