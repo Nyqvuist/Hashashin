@@ -1,6 +1,5 @@
 git+https://github.com/hikari-py/hikari
 git+https://github.com/FasterSpeeding/Tanjun
-lavasnek-rs==0.1.0_alpha.1
 python-dotenv==0.19.1
 nltk==3.6.5
 steam==1.2.0
