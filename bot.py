@@ -5,6 +5,7 @@ import logging
 from dotenv import load_dotenv
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pathlib import Path
 
 load_dotenv()
 
@@ -22,9 +23,11 @@ client = tanjun.Client.from_gateway_bot(
 async def on_started(event: hikari.StartedEvent) -> None:
     print("Hashashin is online!")
 
-for filename in os.listdir("./modules"):
-    if filename.endswith('.py'):
-        client.load_modules(f"modules.{filename[:-3]}")
+# for filename in os.listdir("./modules"):
+#     if filename.endswith('.py'):
+#         client.load_modules(f"modules.{filename[:-3]}")
+
+client.load_modules(*Path("./modules").glob("*.py"))
 
 
 async def tick():
