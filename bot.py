@@ -22,6 +22,10 @@ client = tanjun.Client.from_gateway_bot(
 async def on_started(event: hikari.StartedEvent) -> None:
     print("Hashashin is online!")
 
+for filename in os.listdir("./modules"):
+    if filename.endswith('.py'):
+        client.load_modules(f"modules.{filename[:-3]}")
+
 
 async def tick():
     await client.rest.create_message(
@@ -42,10 +46,6 @@ if __name__ == '__main__':
     scheduler = AsyncIOScheduler()
     scheduler.add_job(tick, 'cron', day_of_week='6',hour='12', minute='30')
     scheduler.start()
-
-for filename in os.listdir("./modules"):
-    if filename.endswith('.py'):
-        client.load_modules(f"modules.{filename[:-3]}")
 
 bot.run()
 
