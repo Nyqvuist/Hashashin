@@ -1,9 +1,9 @@
 git+https://github.com/hikari-py/hikari
 git+https://github.com/FasterSpeeding/Tanjun
-git+https://github.com/agronholm/apscheduler
 python-dotenv==0.19.1
 nltk==3.6.5
 steam==1.2.0
 requests==2.26.0
+apscheduler==3.8.1
 dnspython
 PyNaCl
