@@ -1,5 +1,5 @@
 git+https://github.com/hikari-py/hikari
-hikari-tanjun==2.3.1a1
+git+https://github.com/FasterSpeeding/Tanjun
 python-dotenv==0.19.1
 nltk==3.6.5
 steam==1.2.0
