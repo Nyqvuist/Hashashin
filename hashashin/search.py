@@ -17,7 +17,7 @@ def main(game):
     possibilities = glist
 
     matches = difflib.get_close_matches(
-        game.lower(), possibilities, n=1, cutoff=0.5)
+        game.lower(), possibilities, n=1, cutoff=0.3)
 
     app = [x for x in apps if matches[0] == x["name"].lower()]
 
