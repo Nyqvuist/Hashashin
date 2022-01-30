@@ -32,6 +32,7 @@ async def tick():
         role_mentions=True
     )
 
+
 scheduler = AsyncIOScheduler()
 scheduler.add_job(tick, 'cron', day_of_week='6',hour='12', minute='30')
 
