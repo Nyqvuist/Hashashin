@@ -29,13 +29,15 @@ async def on_started(event: hikari.StartedEvent) -> None:
 
 client.load_modules(*Path("./modules").glob("*.py"))
 
-
 async def tick():
     await client.rest.create_message(
         channel=767527790802632714,
         content="test message to message @The Three Time",
         role_mentions=True
     )
+
+scheduler = AsyncIOScheduler()
+scheduler.add_job(tick, 'cron', day_of_week='6',hour='12', minute='30')
 
 async def sched_start():
     loop = asyncio.get_running_loop()
@@ -45,10 +47,8 @@ async def sched_start():
     return results
 
 
-if __name__ == '__main__':
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(tick, 'cron', day_of_week='6',hour='12', minute='30')
-    scheduler.start()
+scheduler.start()
+
 
 bot.run()
 
