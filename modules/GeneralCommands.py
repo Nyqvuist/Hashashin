@@ -5,7 +5,7 @@ import typing
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import bot
-from datetime import date
+from datetime import date, datetime
 
 
 
@@ -121,7 +121,7 @@ async def sched_weekly(ctx: tanjun.abc.SlashContext, message: str, hour: int, mi
 @tanjun.with_str_slash_option("name", "please name the job.")
 @tanjun.with_mentionable_slash_option("mentionable", "option to mention a role", default=None)
 @tanjun.with_channel_slash_option("channel", "channel to send the message to.")
-@tanjun.with_str_slash_option("date", "yr-month-day hr:min:sec")
+@tanjun.with_str_slash_option("date", "yyyy-mm-dd hh:mm:ss")
 @tanjun.with_str_slash_option("message", "message to schedule once.")
 @tanjun.as_slash_command("sched-once", "schedule a message once.")
 async def sched_once(ctx: tanjun.abc.SlashContext, message: str, date:str, channel: hikari.InteractionChannel, name:str, mentionable: hikari.Role) -> None:
@@ -133,14 +133,16 @@ async def sched_once(ctx: tanjun.abc.SlashContext, message: str, date:str, chann
                 content=message,
                 role_mentions=(mentionable, True)
             )
-        bot.scheduler.add_job(once, 'date', run_date=date, id=name)
+        bot.scheduler.add_job(once, 'date', run_date=str(date), id=name)
     else:
         async def once():
             await ctx.rest.create_message(
                 channel=channel,
                 content=message,
             )
-        bot.scheduler.add_job(once, 'date', run_date=date, id=name)
+        print(str(date))
+        bot.scheduler.add_job(once,'date', run_date=str(date), id=name)
+        
     
     await ctx.respond("Your job " + "`" + name + "`" + " has been added.")
 
