@@ -140,7 +140,7 @@ async def sched_once(ctx: tanjun.abc.SlashContext, message: str, date:str, chann
                 channel=channel,
                 content=message,
             )
-        bot.scheduler.add_job(once, 'date', rund_date=date, id=name)
+        bot.scheduler.add_job(once, 'date', run_date=date, id=name)
     
     await ctx.respond("Your job " + "`" + name + "`" + " has been added.")
 
