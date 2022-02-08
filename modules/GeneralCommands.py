@@ -6,6 +6,7 @@ import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import bot
 from datetime import date, datetime
+import difflib
 
 
 
@@ -85,18 +86,6 @@ async def sched_delete(ctx: tanjun.abc.SlashContext, name:str) -> None:
 @tanjun.with_str_slash_option("message", "message to schedule daily.")
 @tanjun.as_slash_command("sched-weekly", "schedule a weekly message.")
 async def sched_weekly(ctx: tanjun.abc.SlashContext, message: str, hour: int, minute: int, channel: hikari.InteractionChannel, name:str, mentionable: hikari.Role, day:str) -> None:
-    
-    convert = {
-        'monday':0,
-        'tuesday':1,
-        "wednesday":2,
-        'thursday':3,
-        'friday':4,
-        'saturday':5,
-        'sunday':6
-    }
-
-    day = convert[day.lower()]
 
     if mentionable:
         async def weekly():
