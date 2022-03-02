@@ -19,8 +19,6 @@ def main(game):
     possibilities = glist
 
     matches = process.extractOne(game, possibilities)
-    print(matches)
-    print(matches[0])
 
     app = [x for x in apps if matches[0] == x["name"].lower()]
 
