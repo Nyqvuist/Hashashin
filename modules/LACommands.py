@@ -10,6 +10,11 @@ component = tanjun.Component()
 events = {
     "Thursday": ["Chaos Gate", "Ghost Ship"],
     "Friday": ["World Boss"],
+    "Saturday": ["World Boss", "Ghost Ship", "Chaos Gate"],
+    "Sunday": ["To be added"],
+    "Monday": ["To be added"],
+    "Tuesday": ["To be added"],
+    "Wednesday": ["To be added"]
 }
 
 
@@ -23,11 +28,19 @@ async def event(ctx: tanjun.abc.SlashContext) -> None:
     next_hour = (now + delta).replace(microsecond=0, second=0, minute=0)
     wait_minutes = (next_hour - now).seconds
     wait_minutes = wait_minutes / 60
-    print(time)
-    print(date)
-    print(wait_minutes)
 
-    await ctx.respond("Work in Progress.")
+    embed = hikari.Embed(
+        title="Today's Events"
+    )
+
+    
+    for event in events:
+        if date == event:
+            for x in events[event]:
+                embed.add_field(name=x, value="in " + str(int(wait_minutes) + 1) + " minutes.", inline=False)
+
+
+    await ctx.respond(embed)
 
 
 
