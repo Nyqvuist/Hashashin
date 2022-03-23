@@ -10,11 +10,11 @@ component = tanjun.Component()
 events = {
     "Thursday": ["Chaos Gate", "Ghost Ship"],
     "Friday": ["World Boss"],
-    "Saturday": ["World Boss", "Ghost Ship", "Chaos Gate"],
-    "Sunday": ["To be added"],
-    "Monday": ["To be added"],
-    "Tuesday": ["To be added"],
-    "Wednesday": ["To be added"]
+    "Saturday": ["Ghost Ship", "Chaos Gate"],
+    "Sunday": ["Field Boss", "Chaos Gate"],
+    "Monday": ["Chaos Gate"],
+    "Tuesday": ["Ghost Ship", "World Boss"],
+    "Wednesday": ["There Are No Events Today"]
 }
 
 
@@ -37,7 +37,10 @@ async def event(ctx: tanjun.abc.SlashContext) -> None:
     for event in events:
         if date == event:
             for x in events[event]:
-                embed.add_field(name=x, value="in " + str(int(wait_minutes) + 1) + " minutes.", inline=False)
+                if x == "There Are No Events Today":
+                    await ctx.respond(x)
+                else:
+                    embed.add_field(name=x, value="in " + str(int(wait_minutes) + 1) + " minutes.", inline=False)
 
 
     await ctx.respond(embed)
