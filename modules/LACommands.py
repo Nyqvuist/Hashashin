@@ -41,9 +41,7 @@ async def event(ctx: tanjun.abc.SlashContext) -> None:
                     await ctx.respond(x)
                 else:
                     embed.add_field(name=x, value="in " + str(int(wait_minutes) + 1) + " minutes.", inline=False)
-
-
-    await ctx.respond(embed)
+                    await ctx.respond(embed)
 
 
 
