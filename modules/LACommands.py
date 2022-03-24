@@ -38,11 +38,11 @@ async def event(ctx: tanjun.abc.SlashContext) -> None:
         if date == event:
             for x in events[event]:
                 if x == "There Are No Events Today":
-                    await ctx.respond(x)
+                    embed.add_field(name="There Are No Events Today.", value="\u200b", inline=True)
                 else:
                     embed.add_field(name=x, value="in " + str(int(wait_minutes) + 1) + " minutes.", inline=False)
-                    await ctx.respond(embed)
-
+                    
+    await ctx.respond(embed)
 
 
 
