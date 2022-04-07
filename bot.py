@@ -26,18 +26,5 @@ async def on_started(event: hikari.StartedEvent) -> None:
 
 client.load_modules(*Path("./modules").glob("*.py"))
 
-    
-scheduler = AsyncIOScheduler(timezone="America/New_York")
-
-
-async def sched_start():
-    loop = asyncio.get_running_loop()
-
-    results = await loop.run_in_executor(None, scheduler.start)
-
-    return results
-
-scheduler.start()
-
 bot.run()
 
