@@ -19,4 +19,4 @@
 
 # Extra Resources
 
-[Documentation](http://www.hashashinbot.com/)
+[Documentation](http://www.hashashinbot.com/steam)
