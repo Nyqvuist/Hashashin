@@ -6,8 +6,10 @@
 
 # Example Images
 
-![steam-image](https://user-images.githubusercontent.com/66129579/162597052-4110f0fa-18e5-4366-936e-84d4df556123.png)
+**Steam Commands**
+![steam-image](https://user-images.githubusercontent.com/66129579/162597052-4110f0fa-18e5-4366-936e-84d4df556123.png)\
 
+**Magic The Gathering Commands**
 ![image](https://user-images.githubusercontent.com/66129579/162597064-73245242-1b56-457e-844c-d547f932e50d.png)
 
 # Resources
