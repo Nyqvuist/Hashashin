@@ -1,0 +1,26 @@
+{
+  "name": "Hashashin",
+  "version": "1.0.0",
+  "description": "- The Hashashin Bot is a lightweight Discord Bot. - Hashashin is primarily used for Steam games information. - Hashashin will continously get updated with more features. - Fully integrated with Discord slash commands.",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.1",
+    "node": "^17.7.2",
+    "node.js": "0.0.1-security"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nyqvuist/Hashashin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nyqvuist/Hashashin/issues"
+  },
+  "homepage": "https://github.com/Nyqvuist/Hashashin#readme"
+}

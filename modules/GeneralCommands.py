@@ -4,7 +4,7 @@ import random
 import typing
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import bot
+import main
 from datetime import date, datetime
 import difflib
 
