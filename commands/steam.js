@@ -58,7 +58,7 @@ async function steamSearch(game) {
 }
 
 
-// Creating an Embed object
+// Creating an Embed object function
 async function gameEmbed(game) {
 
 	let results = await steamSearch(game);
@@ -69,8 +69,12 @@ async function gameEmbed(game) {
 
 	const response = await axios.get(`https://store.steampowered.com/appreviews/${appID}?json=1`)
 
+	let reviews = response.data
+
 	const reg = /<.*?>/ig
 	const reg1 = /<.+>/ig
+
+	let devs = [];
 
 	var tokenizer = new Tokenizer('Test');
 
@@ -102,8 +106,34 @@ async function gameEmbed(game) {
 			notice = cleanHtml(sentences)
 			gameEmbed.setFooter({text: notice})
 		}
+		
+		// Adding multiple devs
+		for(dev in appdetails.developers) {
+			devs.push(appdetails.developers[dev])
+		};
+		let developer = devs.join(', ')
+		gameEmbed.addField('Developers: ', developer, true)
 
+		// Price check for games
 
+		let price = appdetails.price_overview
+
+		if(appdetails.is_free === true) {
+			gameEmbed.addField('Price: ', 'Free', true)
+		}
+		else if(appdetails.release_date.coming_soon === true) {
+			gameEmbed.addField('Price: ', 'Coming Soon', true)
+		}
+		else if(price.initial_formatted != '') {
+			gameEmbed.addField('Price: ', `~~${price.initial_formatted}~~` + ' ' + `**${price.final_formatted}**`, true)
+		}
+		else {
+			gameEmbed.addField('Price: ', price.final_formatted, true)
+		};
+
+		// Adding Reviews
+		gameEmbed.addField('Review: ', reviews.query_summary.review_score_desc, true)
+		
 
 	return gameEmbed
 
