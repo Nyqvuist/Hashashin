@@ -17,7 +17,8 @@
     "node": "^17.7.2",
     "node-fetch": "^3.2.4",
     "node.js": "0.0.1-security",
-    "npm": "^8.10.0"
+    "npm": "^8.10.0",
+    "sentence-tokenizer": "^1.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
