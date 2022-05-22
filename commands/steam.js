@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fuzzysort = require('fuzzysort');
 const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Message } = require('discord.js');
 const Tokenizer = require('sentence-tokenizer');
 
 
@@ -18,11 +18,44 @@ module.exports = {
 					option.setName('game')
 					.setDescription('The name of game.')
 					.setRequired(true))
+			)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('update')
+				.setDescription('Game Updates')
+				.addStringOption(option => 
+					option.setName('game')
+					.setDescription('The name of game.')
+					.setRequired(true))
+			)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('count')
+				.setDescription('Player count for a game.')
+				.addStringOption(option => 
+					option.setName('game')
+					.setDescription('The name of game.')
+					.setRequired(true))
 			),
 	async execute(interaction) {
 		if(interaction.options.getSubcommand() === 'search'){
 			const game = interaction.options.getString('game')
-			let embed = await gameEmbed(game);
+			try {
+				let embed = await gameEmbed(game);
+				await interaction.reply({embeds: [embed]});
+			} catch (e) {
+				if(e instanceof TypeError) {
+					await interaction.reply(
+						'Please double check the spelling of the game. Special characters will need to be added.')
+				}
+			}
+		} else if(interaction.options.getSubcommand() === 'update'){
+			const game = interaction.options.getString('game')
+			let embed = await gameUpdate(game);
+			await interaction.reply({embeds: [embed]});
+		} else if(interaction.options.getSubcommand() === 'count'){
+			const game = interaction.options.getString('game')
+			let embed = await playerCount(game);
 			await interaction.reply({embeds: [embed]});
 		}
 	},
@@ -55,7 +88,7 @@ async function steamSearch(game) {
 	let name = app[0].name
 
 	return [appID, name]
-}
+};
 
 
 // Creating an Embed object function
@@ -71,7 +104,6 @@ async function gameEmbed(game) {
 
 	let reviews = response.data
 
-	const reg = /<.*?>/ig
 	const reg1 = /<.+>/ig
 
 	let devs = [];
@@ -102,7 +134,8 @@ async function gameEmbed(game) {
 		else {
 			let notice = appdetails.legal_notice
 			tokenizer.setEntry(notice)
-			let sentences = tokenizer.getSentences().join(' ')
+			let sentences = tokenizer.getSentences()
+			sentences = sentences.slice(0,2).join(' ')
 			notice = cleanHtml(sentences)
 			gameEmbed.setFooter({text: notice})
 		}
@@ -136,5 +169,101 @@ async function gameEmbed(game) {
 		
 
 	return gameEmbed
+
+};
+
+
+// Game Update Logic
+async function gameUpdate(game) {
+
+	let results = await steamSearch(game);
+
+	let appID = results[0]
+
+	const resp = await axios.get(`https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=${appID}`)
+	const response = await axios.get(`https://store.steampowered.com/api/appdetails/?appids=${appID}&l=english`)
+	
+	let appdetails = response.data[`${appID}`].data
+
+	const reg = /<.*?>|\[.*?\]|\{.*?\}|\[img\].+\[img\]/ig
+
+	var tokenizer = new Tokenizer('Test');
+
+	function cleanHtml(raw_html) {
+		let cleanText = raw_html.replace(reg, '')
+		return cleanText
+	}
+
+	let items = resp.data.appnews.newsitems
+	let item =[];
+
+	for(x in items) {
+		if(items[x].feedlabel === 'Community Announcements') {
+			item.push(items[x])
+		}
+	};
+
+	tokenizer.setEntry(item[0].contents)
+	let sentences = tokenizer.getSentences()
+	sentences = sentences.slice(0,3).join(' ')
+
+	let contents = cleanHtml(sentences)
+	
+	let url = item[0].url
+	url = url.replace(' ', '')
+
+	const updateEmbed = new MessageEmbed()
+		.setColor('RANDOM')
+		.setTitle(item[0].title)
+		.setURL(url)
+		.setDescription(contents)
+		.setThumbnail(appdetails.header_image)
+
+		let date_time = item[0].date
+
+		let date = new Date(date_time*1000).toLocaleDateString('en-US')
+
+		updateEmbed.addField('Date: ', date, true)
+
+		if(item[0].author != ''){
+			updateEmbed.addField('Author: ', item[0].author, true)
+		} else {
+			
+		}
+
+		updateEmbed.setFooter({text:item[0].feedlabel})
+
+	return updateEmbed
+
+}
+
+// Game player count logic
+async function playerCount(game){
+
+	let results = await steamSearch(game);
+
+	let appID = results[0]
+	let name = results[1]
+
+	gsdata = await axios.get(`https://store.steampowered.com/api/appdetails/?appids=${appID}&l=english`)
+	codata = await axios.get(`https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=${appID}`)
+
+	let check = codata.data.response
+
+	if(check.player_count === undefined){
+		await interaction.reply('This game currently does not have players online.')
+
+	} else {
+		let player_count = check.player_count
+		let appdetails = gsdata.data[`${appID}`].data
+
+		const playerEmbed = new MessageEmbed()
+			.setColor('RANDOM')
+			.setTitle(name)
+			.setDescription('There are currently ' + `**${player_count}**` + ' playing.')
+			.setThumbnail(appdetails.header_image)
+		
+			return playerEmbed
+	}
 
 }
