@@ -13,6 +13,7 @@
     "dotenv": "^16.0.1",
     "fuzzysort": "^1.9.0",
     "install": "^0.13.0",
+    "lodash": "^4.17.21",
     "mongoose": "^6.3.3",
     "node": "^17.7.2",
     "node-fetch": "^3.2.4",

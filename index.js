@@ -64,5 +64,23 @@ client.once('ready', () => {
     console.log('Hashashin is online!');
 });
 
+client.on('ready', async() => {
+	const games = [
+		'Among Us',
+		'ELDEN RING',
+		'Devil May Cry 5',
+		'HuniePop',
+		'Lost Ark',
+		'Maplestory',
+		'Assassins Creed 2',
+	]
+
+	setInterval(() => {
+		const status = games[Math.floor(Math.random() * games.length)]
+		client.user.setPresence({activities: [{name: `${status}`, type: 'PLAYING'}]})
+	},  30 * 60 * 100)
+
+})
+
 // Login to Discord with the client token.
 client.login(token);
