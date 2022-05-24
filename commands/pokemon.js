@@ -94,7 +94,7 @@ async function pokemonRoute(pokemon, version){
                 .setTitle(pokemon_name + ' can be found in these versions!')
 
                 for(x in dlist){
-                    routeEmbed.addField(dlist[x], '\u200b', true)
+                    routeEmbed.addField(dlist[x], '\u200b', false)
                 }
             return routeEmbed
         }
