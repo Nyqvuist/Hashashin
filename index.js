@@ -73,6 +73,9 @@ client.on('ready', async() => {
 		'Lost Ark',
 		'Maplestory',
 		'Assassins Creed 2',
+		'Bioshock',
+		'Apex Legends',
+		'Call Of Duty: Black Ops',
 	]
 
 	setInterval(() => {
