@@ -89,13 +89,12 @@ async function pokemonRoute(pokemon, version){
 
         } else if(vlist.length === 0 && dlist.length > 0){
             let pokemon_name = _.upperFirst(pokemon)
+            let value = dlist.join(' ')
             const routeEmbed = new MessageEmbed()
                 .setColor('RANDOM')
                 .setTitle(pokemon_name + ' can be found in these versions!')
-
-                for(x in dlist){
-                    routeEmbed.addField(dlist[x], '\u200b', false)
-                }
+                .setDescription(value)
+            
             return routeEmbed
         }
     }
