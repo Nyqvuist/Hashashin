@@ -23,8 +23,7 @@ module.exports = {
     async execute(interaction) {
         if(interaction.options.getString('category') === 'csgo quiz'){
             const embed = await csgoQuiz()
-            await interaction.reply({embeds: [embed[0]]})
-            const message = await interaction.fetchReply();
+            const message = await interaction.reply({embeds: [embed[0]], fetchReply: true})
             message.react('1️⃣')
                 .then(() => message.react('2️⃣'))
                 .then(() => message.react('3️⃣'))
@@ -34,8 +33,7 @@ module.exports = {
             await interaction.editReply({embeds:[edit]})
         } else if(interaction.options.getString('category') === 'LA_quiz') {
             const embed = await lostarkQuiz()
-            await interaction.reply({embeds: [embed[0]]})
-            const message = await interaction.fetchReply();
+            const message = await interaction.reply({embeds: [embed[0]], fetchReply: true})
             message.react('1️⃣')
                 .then(() => message.react('2️⃣'))
                 .then(() => message.react('3️⃣'))
