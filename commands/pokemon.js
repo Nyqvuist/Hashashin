@@ -58,14 +58,17 @@ async function pokemonRoute(pokemon, version){
         pokemondata = pokemondata.data
 
         for(x in pokemondata) {
-            let version_data = pokemondata[x].version_details[0]
-            if(version_data.version.name === matches[0].target.toLowerCase()){
-                vlist.push(pokemondata[x])
-            }else {
-                if(version_data.version.name){
-                    dlist.push(version_data.version.name)
+            let version_data = pokemondata[x].version_details
+            console.log(pokemondata[x])
+            for(y in version_data) {
+                if(version_data[y].version.name === matches[0].target.toLowerCase()) {
+                    vlist.push(pokemondata[x])
+                } else {
+                    if(version_data[y].version.name){
+                        dlist.push(version_data[y].version.name)
+                    }
                 }
-            }
+            } 
         };
 
         dlist = new Set(dlist)
