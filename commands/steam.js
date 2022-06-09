@@ -77,7 +77,9 @@ async function steamSearch(game) {
 	}
 	let matches = fuzzysort.go(game, glist, {
 		limit: 1,
+		threshold: 0,
 	})
+	console.log(matches, matches.score)
 	for(var y in gdata) {
 		if(matches[0].target.toLowerCase() == gdata[y].name.toLowerCase()) {
 			app.push(gdata[y])
