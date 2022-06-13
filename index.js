@@ -14,7 +14,10 @@ mongoose.connect(DB, () => {
 })
 
 // Create a new client instance
-const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
+const client = new Client({
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MEMBERS],
+	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+});
 
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
