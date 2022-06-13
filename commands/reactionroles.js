@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, Message } = require('discord.js');
+const {Collection} = require('discord.js');
 
 
 
@@ -41,6 +42,8 @@ module.exports = {
             
             await interaction.reply('The reaction role message has been created.')
             const message = await channel.send({ embeds: [roleEmbed], fetchReply: true });
+            const polls = new Set()
+            const reactionCount = new Collection()
             const client = interaction.client
             const warriorEmoji = message.guild.emojis.cache.find(emoji => emoji.name === 'warrior')
             const assassinEmoji = message.guild.emojis.cache.find(emoji => emoji.name === 'assassin')
@@ -53,7 +56,10 @@ module.exports = {
             message.react(martialEmoji);
             message.react(gunnerEmoji);
 
+            polls.add(message)
+
             client.on('messageReactionAdd', async (reaction, user) => {
+                if(user.id === client.user.id) return;
                 if(reaction.message.partial) await reaction.message.fetch();
                 if(reaction.partial) await reaction.fetch();
                 if(user.bot) return;
@@ -78,9 +84,21 @@ module.exports = {
                 }  else {
                     return;
                 }
+
+                const {message} = reaction
+
+                if(polls.has(message)) {
+                    if(!reactionCount.get(message)) reactionCount.set(message, new Collection())
+                    const userCount = reactionCount.get(message)
+                    userCount.set(user, (userCount.get(user) || 0) + 1)
+                    if(userCount.get(user) > 1) {
+                        reaction.users.remove(user)
+                    }
+                }
             });
             
             client.on('messageReactionRemove', async (reaction, user) => {
+                if(user.id === client.user.id) return;
                 if(reaction.message.partial) await reaction.message.fetch();
                 if(reaction.partial) await reaction.fetch();
                 if(user.bot) return;
@@ -105,6 +123,10 @@ module.exports = {
                 }  else {
                     return;
                 }
+
+                const {message} = reaction
+                const userCount = reactionCount.get(message)  
+                if(polls.has(message)) userCount.set(user, reactionCount.get(message).get(user) - 1)          
             });
         }
     }
