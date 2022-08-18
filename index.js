@@ -7,7 +7,6 @@ const token = process.env.DISCORD_TOKEN;
 const DB = process.env.DB;
 const STEAM = process.env.STEAM_KEY;
 
-
 // Making a DB connection.
 mongoose.connect(DB, () => {
     console.log('DB is connected.')
@@ -15,7 +14,7 @@ mongoose.connect(DB, () => {
 
 // Create a new client instance
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MEMBERS],
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_VOICE_STATES],
 	partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
 

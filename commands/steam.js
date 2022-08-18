@@ -79,7 +79,7 @@ async function steamSearch(game) {
 		limit: 1,
 		threshold: 0,
 	})
-	console.log(matches, matches.score)
+	
 	for(var y in gdata) {
 		if(matches[0].target.toLowerCase() == gdata[y].name.toLowerCase()) {
 			app.push(gdata[y])
@@ -147,27 +147,27 @@ async function gameEmbed(game) {
 			devs.push(appdetails.developers[dev])
 		};
 		let developer = devs.join(', ')
-		gameEmbed.addField('Developers: ', developer, true)
+		gameEmbed.addFields('Developers: ', developer, true)
 
 		// Price check for games
 
 		let price = appdetails.price_overview
 
 		if(appdetails.is_free === true) {
-			gameEmbed.addField('Price: ', 'Free', true)
+			gameEmbed.addFields('Price: ', 'Free', true)
 		}
 		else if(appdetails.release_date.coming_soon === true) {
-			gameEmbed.addField('Price: ', 'Coming Soon', true)
+			gameEmbed.addFields('Price: ', 'Coming Soon', true)
 		}
 		else if(price.initial_formatted != '') {
-			gameEmbed.addField('Price: ', `~~${price.initial_formatted}~~` + ' ' + `**${price.final_formatted}**`, true)
+			gameEmbed.addFields('Price: ', `~~${price.initial_formatted}~~` + ' ' + `**${price.final_formatted}**`, true)
 		}
 		else {
-			gameEmbed.addField('Price: ', price.final_formatted, true)
+			gameEmbed.addFields('Price: ', price.final_formatted, true)
 		};
 
 		// Adding Reviews
-		gameEmbed.addField('Review: ', reviews.query_summary.review_score_desc, true)
+		gameEmbed.addFields('Review: ', reviews.query_summary.review_score_desc, true)
 		
 
 	return gameEmbed
@@ -225,10 +225,10 @@ async function gameUpdate(game) {
 
 		let date = new Date(date_time*1000).toLocaleDateString('en-US')
 
-		updateEmbed.addField('Date: ', date, true)
+		updateEmbed.addFields('Date: ', date, true)
 
 		if(item[0].author != ''){
-			updateEmbed.addField('Author: ', item[0].author, true)
+			updateEmbed.addFields('Author: ', item[0].author, true)
 		} else {
 			
 		}
