@@ -52,8 +52,6 @@ module.exports = {
             const description = interaction.options.getString('message')
             const meme = await Discordmeme.aggregate([{$sample: {size:1}}])
 
-            console.log(meme[0].pic)
-
             let args = [raid1, raid2, raid3, raid4];
 
             for(var x = 0; x < args.length; x++){
@@ -69,8 +67,9 @@ module.exports = {
                 if(description != null){
                     raidEmbed.setDescription(description)
                 }
+                var num = 1;
                 for(var x = 0; x < args.length; x++){
-                    raidEmbed.addField(args[x],'\u200b', false)
+                    raidEmbed.addFields({name:`${num++}. ` + args[x],value:'\u200b',inline: false})
                 }
                 raidEmbed.setTimestamp()
                 raidEmbed.setFooter({text: 'Raid Organizer'})

@@ -85,7 +85,7 @@ async function pokemonRoute(pokemon, version){
                 let version_data = vlist[y]['version_details'][0]
                 let name = vlist[y]['location_area']['name']
                 name = name.replaceAll('-', ' ')
-                routeEmbed.addField(name, 'Encounter Potential: ' + String(version_data.max_chance) + '%', false)
+                routeEmbed.addFields({name:name,value: 'Encounter Potential: ' + String(version_data.max_chance) + '%',inline: false})
             }
 
             return routeEmbed

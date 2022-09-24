@@ -60,7 +60,7 @@ async function csgoQuiz() {
         .setColor('RANDOM')
         .setTitle(question)
         .setDescription(name)
-        .addField(shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3], '\u200B', false)
+        .addFields({name:shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3],value: '\u200B',inline: false})
         .setTimestamp()
         .setFooter({text: 'CSGO Quiz'})
 
@@ -80,7 +80,7 @@ async function lostarkQuiz() {
     const quizEmbed = new MessageEmbed()
         .setColor('RANDOM')
         .setTitle(question)
-        .addField(shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3], '\u200B', false)
+        .addFields({name:shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3],value: '\u200B',inline: false})
         .setTimestamp()
         .setFooter({text: 'Lost Ark Quiz'})
 
@@ -99,7 +99,7 @@ async function embedEdit(question,name,answer,shuffle) {
         .setColor('RANDOM')
         .setTitle(question)
         .setDescription(name)
-        .addField(shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3], '\u200B', false)
+        .addFields({name:shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3],value:'\u200B',inline: false})
         .setTimestamp()
         .setFooter({text: 'CSGO Quiz'})
 
@@ -119,7 +119,7 @@ async function lostarkEdit(question,answer,shuffle) {
     const editedEmbed = new MessageEmbed()
         .setColor('RANDOM')
         .setTitle(question)
-        .addField(shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3], '\u200B', false)
+        .addFields({name:shuffle[0] + '\n' + shuffle[1] + '\n' + shuffle[2] + '\n' + shuffle[3],value: '\u200B',inline: false})
         .setTimestamp()
         .setFooter({text: 'Lost Ark Quiz'})
 

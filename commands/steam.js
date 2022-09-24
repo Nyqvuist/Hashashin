@@ -147,27 +147,27 @@ async function gameEmbed(game) {
 			devs.push(appdetails.developers[dev])
 		};
 		let developer = devs.join(', ')
-		gameEmbed.addFields('Developers: ', developer, true)
+		gameEmbed.addFields({name:'Developers: ', value: developer, inline:true})
 
 		// Price check for games
 
 		let price = appdetails.price_overview
 
 		if(appdetails.is_free === true) {
-			gameEmbed.addFields('Price: ', 'Free', true)
+			gameEmbed.addFields({name:'Price: ',value: 'Free', inline:true})
 		}
 		else if(appdetails.release_date.coming_soon === true) {
-			gameEmbed.addFields('Price: ', 'Coming Soon', true)
+			gameEmbed.addFields({name:'Price: ',value: 'Coming Soon',inline: true})
 		}
 		else if(price.initial_formatted != '') {
-			gameEmbed.addFields('Price: ', `~~${price.initial_formatted}~~` + ' ' + `**${price.final_formatted}**`, true)
+			gameEmbed.addFields({name:'Price: ',value: `~~${price.initial_formatted}~~` + ' ' + `**${price.final_formatted}**`,inline: true})
 		}
 		else {
-			gameEmbed.addFields('Price: ', price.final_formatted, true)
+			gameEmbed.addFields({name:'Price: ',value: price.final_formatted, inline:true})
 		};
 
 		// Adding Reviews
-		gameEmbed.addFields('Review: ', reviews.query_summary.review_score_desc, true)
+		gameEmbed.addFields({name:'Review: ', value: reviews.query_summary.review_score_desc, inline:true})
 		
 
 	return gameEmbed
@@ -225,10 +225,10 @@ async function gameUpdate(game) {
 
 		let date = new Date(date_time*1000).toLocaleDateString('en-US')
 
-		updateEmbed.addFields('Date: ', date, true)
+		updateEmbed.addFields({name:'Date: ',value: date,inline: true})
 
 		if(item[0].author != ''){
-			updateEmbed.addFields('Author: ', item[0].author, true)
+			updateEmbed.addFields({name:'Author: ',value: item[0].author,inline: true})
 		} else {
 			
 		}
