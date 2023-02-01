@@ -60,16 +60,6 @@ client.once("ready", () => {
   console.log("Hashashin is online!");
 });
 
-client.on("guildMemberAdd", (member) => {
-  if (member.guild.id === "985258964742713364") {
-    member.send(
-      "Welcome to the Lost Ark Windia Guild Discord!\nWe are happy to have you, just remember to visit the **#get-roles** channel and click on your main class role to gain access to class specific channels.\nThank you!"
-    );
-  } else {
-    return;
-  }
-});
-
 client.on("ready", async () => {
   const games = [
     "Among Us",
